@@ -5,6 +5,3 @@ __pycache__
 
 # Documentation
 docs/_*
-
-# Catalogs
-catalogs/*
