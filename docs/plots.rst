@@ -3,7 +3,7 @@
 Plots
 ======
 
-*Voiager* produces several figures to visualize the input data and the inferred results, these are all stored in the `results/ <results/>`_ folder.
+*Voiager* produces several figures to visualize the input data and the inferred results, these are all stored in the `results/ <https://github.com/nhamaus/Voiager/tree/main/results/>`_ folder.
 
 Catalog properties
 ------------------
