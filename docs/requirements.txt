@@ -1,0 +1,5 @@
+sphinx>=4.5.0
+sphinx_rtd_theme>=1.2.2
+sphinx_rtd_size>=0.2.0
+sphinx-tabs>=3.3.1
+pygments>=2.14.0

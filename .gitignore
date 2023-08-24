@@ -1,0 +1,10 @@
+
+# Python and packaging
+*.pyc
+__pycache__
+
+# Documentation
+docs/_*
+
+# Catalogs
+catalogs/*
