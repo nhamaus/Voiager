@@ -12,9 +12,10 @@ cosmology = "wCDM" # Cosmological model to constrain (current options: "LCDM", "
 import os
 runExec = True # If True, run executable when called
 basePath = os.getcwd() # Location of the top level code directory
-tracerPath = basePath+'/catalogs/tracers/' # Location of tracer catalogs
-voidPath = basePath+'/catalogs/voids/' # Location of void catalogs
-outPath = basePath+'/results/'+survey+'/'+sample+version+'/' # Location to store output
+tracerPath = basePath+'/../Voiager_local/catalogs/tracers/' # Location of tracer catalogs
+voidPath = basePath+'/../Voiager_local/catalogs/voids/' # Location of void catalogs
+outPath = basePath+'/results/'+survey+'/'+sample+version+'/' # Location to store output files
+plotPath = outPath+'/plots/' # Location to store plots
 columnNames = ['RA','DEC','Z_red'] # Tracer and random catalog column headers for right ascension, declination, redshift
 stackFile = "stacks.dat" # Filename for data of stacks
 chainFile = "chains.dat" # Filename for data of chains

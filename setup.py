@@ -17,7 +17,7 @@ def find_version():
 setup(
     name='Voiager',
     version=find_version(),
-    packages=find_packages(exclude=['docs']),
+    packages=find_packages(exclude=['docs','catalogs','results']),
     url='https://github.com/nhamaus/Voiager',
     license='MIT',
     classifiers=[
@@ -42,10 +42,10 @@ setup(
     #    'getdist',
     #    'h5py',
     #    'healpy',
-	#    'matplotlib',
-	#    'numpy',
-	#    'scipy',
-	#    'tqdm',
-	#    'vide',
+    #    'matplotlib',
+    #    'numpy',
+    #    'scipy',
+    #    'tqdm',
+    #    'vide',
     #],
 )

@@ -1,5 +1,3 @@
-from voiager import params
-
 def main():
     print('Launching Voiager...')
     from voiager import launch

@@ -51,7 +51,7 @@ print('Building stacks...')
 wg = wr = None # weights for galaxies and randoms (optional)
 
 if os.path.exists(params.outPath+params.stackFile): # Load existing stacks
-    print('=> Loading previous run...')
+    print('=> Loading previous run')
     Nvi, rvi, zvi, rmi, rmi2d, xip, xipE, xi, xiE, xiC, xiCI, xi2d, xi2dC, xi2dCI  = pickle.load(open(params.outPath+params.stackFile,"rb"))
 else:
     if not params.project2d: # LOS-projected correlations
@@ -86,10 +86,11 @@ rs, xips, xid, xids, Xid, Xids, xit, xits, xi2dt, xi2dts = datalib.getModel(rmi,
 print('Finding best fit...')
 if params.datavec=='1d': p0, p1, chi2 = datalib.bestFit(zvi, xit, xi, xiC, xiCI)
 if params.datavec=='2d': p0, p1, chi2 = datalib.bestFit(zvi, xi2dt, xi2d, xi2dC, xi2dCI)
-print('=> Parameters: ',list(params.par.keys()),'\n',p1,'\n qper/qpar: \n',p1[:,1]/p1[:,2],'\n Chi^2: \n',chi2)
+print('=> Parameters: ',list(params.par.keys()),'\n',p1,'\n qper/qpar: \n',p1[:,1]/p1[:,2],'\n Reduced chi-square: \n',chi2)
 
 
 print('MCMC sampling...')
+if os.path.exists(params.outPath+params.chainFile): print('=> Continuing from previous chain')
 if params.datavec=='1d': sampler = datalib.runMCMC(p1, xit, xi, xiC, xiCI, params.Nwalk, params.Nchain, params.chainFile)
 if params.datavec=='2d': sampler = datalib.runMCMC(p1, xi2dt, xi2d, xi2dC, xi2dCI, params.Nwalk, params.Nchain, params.chainFile)
 
@@ -136,6 +137,7 @@ DAHe.append(DAH_err)
 
 
 print('Constraining cosmology...')
+if os.path.exists(params.outPath+params.cosmoFile): print('=> Continuing from previous cosmology chain')
 sampler_cosmo = datalib.runMCMC_cosmo(zvi, DAH_fit, DAH_err, params.Nwalk, params.Nchain, params.cosmoFile, params.cosmology)
 
 # Load cosmology chains:

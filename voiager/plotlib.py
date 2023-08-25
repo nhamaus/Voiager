@@ -58,7 +58,7 @@ def voidSky(Xv, Xvr=None):
     plt.ylabel(r'Dec', fontsize=14)
     plt.xticks(fontsize=10)
     plt.yticks(fontsize=10)
-    plt.savefig(params.outPath+'void_sky.jpg', format='jpg', bbox_inches="tight", dpi=800)
+    plt.savefig(params.plotPath+'void_sky.jpg', format='jpg', bbox_inches="tight", dpi=800)
     plt.clf()
 
 
@@ -83,7 +83,7 @@ def voidBox(xv, zv, azim=65., elev=45.):
     ax.set_zlabel(r'$X_3\,[h^{-1}\mathrm{Mpc}]$', fontsize=14)
     ax.tick_params(labelsize=10)
     ax.view_init(elev, azim)
-    plt.savefig(params.outPath+'void_box.jpg', format='jpg', bbox_inches="tight", dpi=400)
+    plt.savefig(params.plotPath+'void_box.jpg', format='jpg', bbox_inches="tight", dpi=400)
     # plt.show()
     plt.clf()
 
@@ -106,7 +106,7 @@ def voidRedshift(rv, zv, rvr=None, zvr=None):
         plt.scatter(rvr, zvr, s=0.2, c='k', alpha=0.1, edgecolors='none', marker='.')
     plt.xlabel(r'$R \; [h^{-1}\mathrm{Mpc}]$', fontsize=fs)
     plt.ylabel(r'$Z$', fontsize=fs)
-    plt.savefig(params.outPath+'void_redshift.jpg', format='jpg', bbox_inches="tight", dpi=400)
+    plt.savefig(params.plotPath+'void_redshift.jpg', format='jpg', bbox_inches="tight", dpi=400)
     plt.clf()
 
 
@@ -137,7 +137,7 @@ def voidAbundance(yv, Nbin, ysymb, yunit, ystring, ylim=(1e-10,1e-5), yvr=None):
     #plt.xlim((yv.min(),yv.max()))
     plt.ylim(ylim)
     plt.yscale('log')
-    plt.savefig(params.outPath+'n_'+ystring+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+    plt.savefig(params.plotPath+'n_'+ystring+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
     plt.clf()
 
 
@@ -166,7 +166,7 @@ def redshiftDistribution(zgm, zvm, ngm, nvm, zv=None, zgrm=None, zvrm=None, ngrm
     plt.ylabel(r'$n(z) \; [h^3\mathrm{Mpc}^{-3}]$', fontsize=fs)
     plt.yscale('log')
     plt.legend(loc = 'best', prop={'size':16}, fancybox=True, shadow=True)
-    plt.savefig(params.outPath+'n_redshift.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+    plt.savefig(params.plotPath+'n_redshift.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
     plt.clf()
 
 
@@ -184,7 +184,7 @@ def tracerBias(zg, bg):
     plt.xlabel(r'$z$', fontsize=fs)
     plt.ylabel(r'$b(z)$', fontsize=fs)
     plt.legend(prop={'size':16}, fancybox=True, shadow=True)
-    plt.savefig(params.outPath+'bias.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+    plt.savefig(params.plotPath+'bias.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
     plt.clf()
 
 
@@ -218,7 +218,7 @@ def xi_p_test(rs, rmi, rvi, xid, p0=[1,-0.8,2.,8.]):
         plt.yticks(np.linspace(-1,0.4,8))
         legend = plt.legend(loc = 4, prop={'size':18}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
         legend.get_title().set_fontsize(18)
-        plt.savefig(params.outPath+'xi_p_test_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+        plt.savefig(params.plotPath+'xi_p_test_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
         plt.clf()
 
 
@@ -259,7 +259,7 @@ def xi_p(xip, xipE, xips, xid, xidE, xids, xi, xiE, xits, rmi, rs, rvi, zvi, p1)
         plt.figtext(0.6,0.8,r'$\bar{Z} = '+'{:>3.2f}'.format(np.round(zvi[i],2))+'$')
         legend = plt.legend(loc = 4, prop={'size':18}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
         legend.get_title().set_fontsize(18)
-        plt.savefig(params.outPath+'xi_p_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+        plt.savefig(params.plotPath+'xi_p_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
         plt.clf()
 
 
@@ -295,7 +295,7 @@ def xi(xi, xiE, xits, rmi, rs, rvi, zvi, p1, chi2):
         if (params.datavec == '1d'): plt.figtext(0.68, 0.4, r'$\chi^2_\mathrm{red} \,=\, '+'{:>3.2f}'.format(np.round(chi2[i],2))+'$')
         legend = plt.legend(loc = 4, prop={'size':18}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
         legend.get_title().set_fontsize(18)
-        plt.savefig(params.outPath+'xi_ell_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+        plt.savefig(params.plotPath+'xi_ell_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
         plt.clf()
 
 
@@ -332,7 +332,7 @@ def xi_ell(xi, xiE, xits, rmi, rs, rvi, zvi, p1):
         if l==0:
             legend = plt.legend(loc = 4, title = r'$\bar{R} \, [h^{-1}\mathrm{Mpc}],\; \bar{Z}$ ',prop={'size':18}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
             legend.get_title().set_fontsize(fs)
-        plt.savefig(params.outPath+'xi_ell='+str(l)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+        plt.savefig(params.plotPath+'xi_ell='+str(l)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
         plt.clf()
 
 
@@ -379,7 +379,7 @@ def xi_2d(xi2d, xi2dts, rmi2d, rvi, zvi, p1, chi2):
         plt.xticks(np.arange(-xymax, xymax+1, step=1))
         plt.yticks(np.arange(-xymax, xymax+1, step=1))
         if (params.datavec == '2d'): plt.figtext(0.55, 0.13, r'$\chi^2_\mathrm{red} \,=\, '+'{:>3.2f}'.format(np.round(chi2[i],2))+'$')
-        plt.savefig(params.outPath+'xi_2d_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+        plt.savefig(params.plotPath+'xi_2d_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
         plt.clf()
 
 
@@ -408,14 +408,14 @@ def xi_cov(xiC, dim=1):
             plt.ylabel(r'$\ell$', fontsize=fs)
             plt.xticks(np.linspace(1, max(params.ell)+1, len(params.ell))/len(params.ell)/2, params.ell)
             plt.yticks(np.linspace(1, max(params.ell)+1, len(params.ell))/len(params.ell)/2, params.ell)
-            plt.savefig(params.outPath+'cov_ell_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, dpi=300, bbox_inches="tight")
+            plt.savefig(params.plotPath+'cov_ell_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, dpi=300, bbox_inches="tight")
         if dim==2:
             plt.xlabel(r'$i$', fontsize=fs)
             plt.ylabel(r'$j$', fontsize=fs)
             Nbin = np.sqrt(len(xiC[i])) if params.symLOS else np.sqrt(len(xiC[i])/2) # symmetry along LOS
             plt.xticks(np.arange(1,Nbin+1)/(Nbin), np.arange(1,Nbin+1).astype(int), fontsize=8)
             plt.yticks(np.arange(1,Nbin+1)/(Nbin), np.arange(1,Nbin+1).astype(int), fontsize=8)
-            plt.savefig(params.outPath+'cov_2d_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, dpi=300, bbox_inches="tight")
+            plt.savefig(params.plotPath+'cov_2d_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, dpi=300, bbox_inches="tight")
         plt.clf()
 
 
@@ -453,7 +453,7 @@ def fs8_DAH(zvi, fs8, fs8e, DAH, DAHe, legend):
     axs[1].set_ylim(1.0,1.85)
     legend = axs[1].legend(loc=4, prop={'size':14}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
     legend.get_title().set_fontsize(fs)
-    plt.savefig(params.outPath+'fs8_DAH.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+    plt.savefig(params.plotPath+'fs8_DAH.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
     plt.clf()
 
 
@@ -489,8 +489,8 @@ def triangle(samples, p0, p1, rvi, zvi, pLim, pop, legend=None, title=None):
         labels = np.delete(label,pops)
         pSample = []
         if len(samples) > 1:
-            for s in sample: pSample.append(getdist.MCSamples(samples=s, names=names, labels=labels, ignore_rows=1))
-        else: pSample.append(getdist.MCSamples(samples=sample, names=names, labels=labels, ignore_rows=1))
+            for s in sample: pSample.append(getdist.MCSamples(samples=s, names=names, labels=labels, ignore_rows=0))
+        else: pSample.append(getdist.MCSamples(samples=sample, names=names, labels=labels, ignore_rows=0))
         gd = getdist.plots.get_subplot_plotter()
         gd.settings.axes_fontsize = fs
         gd.settings.lab_fontsize = fs
@@ -518,7 +518,7 @@ def triangle(samples, p0, p1, rvi, zvi, pLim, pop, legend=None, title=None):
                     ax.set_xlim(plim[k])
                     ax.set_ylim(plim[j])
                 #if (j==k): ax.set_title('$'+pSample[0].getInlineLatex(names[j],limit=1,err_sig_figs=2)+'$',fontsize=10)
-        gd.export(params.outPath+'triangle_'+str(i+1)+'.'+params.figFormat)
+        gd.export(params.plotPath+'triangle_'+str(i+1)+'.'+params.figFormat)
 
 
 def triangle_cosmo(samples, logP, pLim, cosmology, legend):
@@ -553,8 +553,8 @@ def triangle_cosmo(samples, logP, pLim, cosmology, legend):
     p1 = samples[0][np.argmax(logP)]
     pSample = []
     if len(samples) > 1:
-        for s in samples: pSample.append(getdist.MCSamples(samples=s, names=names, labels=labels, ignore_rows=1))
-    else: pSample.append(getdist.MCSamples(samples=samples, names=names, labels=labels, ignore_rows=1))
+        for s in samples: pSample.append(getdist.MCSamples(samples=s, names=names, labels=labels, ignore_rows=0))
+    else: pSample.append(getdist.MCSamples(samples=samples, names=names, labels=labels, ignore_rows=0))
     gd = getdist.plots.get_subplot_plotter() # subplot_size_ratio=1.2
     gd.settings.axes_fontsize = 14
     gd.settings.lab_fontsize = 14
@@ -584,4 +584,4 @@ def triangle_cosmo(samples, logP, pLim, cosmology, legend):
                 ax.set_ylim(pLim[j])
             if (j==k): ax.set_title('$'+pSample[0].getInlineLatex(names[j],limit=1,err_sig_figs=2)+'$',fontsize=12)
 
-    gd.export(params.outPath+'triangle_'+params.cosmology+'.'+params.figFormat)
+    gd.export(params.plotPath+'triangle_'+params.cosmology+'.'+params.figFormat)

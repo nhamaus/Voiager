@@ -5,3 +5,6 @@ __pycache__
 
 # Documentation
 docs/_*
+
+# Markov chains
+results/Beyond2pt/C_mock_lightcone_0240/chains*
