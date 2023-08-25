@@ -3,7 +3,7 @@
 Features
 ========
 
-The main functionality of *Voiager* includes the following steps (external package requirements are provided as links in parentheses, all of them can be found in the file `requirements.txt <requirements.txt>`_):
+The main functionality of *Voiager* includes the following steps:
 
 - Reading of tracer and void catalogs (based on `VIDE <https://bitbucket.org/cosmicvoids/vide_public/wiki/Home/>`_)
 - Generation of random catalogs (based on `healpy <https://healpy.readthedocs.io/>`_)

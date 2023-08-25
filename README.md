@@ -10,7 +10,7 @@
 
 ## Features
 
-The main functionality of *Voiager* includes the following steps (external package requirements are provided as links in parentheses, all of them can be found in the file [requirements.txt](requirements.txt)):
+The main functionality of *Voiager* includes the following steps:
 
 - Reading of tracer and void catalogs (based on [VIDE](https://bitbucket.org/cosmicvoids/vide_public/wiki/Home/))
 - Generation of random catalogs (based on [healpy](https://healpy.readthedocs.io/))
@@ -34,6 +34,7 @@ git clone https://github.com/nhamaus/Voiager.git
 cd Voiager
 pip install .
 ```
+External package requirements are provided in the file [requirements.txt](requirements.txt). Follow the instructions provided on the [VIDE wiki](https://bitbucket.org/cosmicvoids/vide_public/wiki/Home/) to install VIDE.
 
 ## Usage
 
