@@ -1,3 +1,7 @@
+<center>
+<img src="docs/voiager.jpg" alt="Voiager" width="200"/>
+</center>
+
 # *Voiager*
 
 **Voi**d dyn**a**mics and **g**eometry **e**xplore**r** (*Voiager*, or short [*V'Ger*](https://intl.startrek.com/database_article/vger)) provides a framework to perform cosmological analyses using voids identified in large-scale structure survey data. The code measures dynamic and geometric shape distortions in void stacks and propagates them to constraints on cosmological parameters using Bayesian inference. More detailed information on this method can be found in the publications listed below.
