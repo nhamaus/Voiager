@@ -36,7 +36,7 @@ setup(
         ],
     },
     install_requires=[
-        'abel',
+        'PyAbel',
         'astropy',
         'emcee',
         'getdist',
