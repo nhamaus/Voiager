@@ -399,7 +399,7 @@ def xi_cov(xiC, dim=1):
         plt.axes().set_aspect('equal')
         coords = np.meshgrid(np.arange(len(xiC[i])),np.arange(len(xiC[i])))[0]/float(len(xiC[i]))
         matrix = xiC[i]/np.sqrt(np.outer(xiC[i].diagonal(), xiC[i].diagonal()))
-        pcol = plt.pcolor(coords[0], coords[1], matrix, cmap=cm.Spectral_r, rasterized=True) #, vmin=-1, vmax=1)
+        pcol = plt.pcolor(coords[0], coords[1], matrix, cmap=cm.Spectral_r, rasterized=True, shading='auto') #, vmin=-1, vmax=1)
         pcol.set_edgecolor("face")
         cbar = plt.colorbar(pad=0.03, format='%.1f')
         cbar.solids.set_edgecolor("face")
