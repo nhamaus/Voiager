@@ -36,7 +36,6 @@ setup(
         ],
     },
     install_requires=[
-        'PyAbel',
         'astropy',
         'emcee',
         'getdist',
@@ -44,6 +43,7 @@ setup(
         'healpy',
         'matplotlib',
         'numpy',
+        'pyabel',
         'scipy',
         'tqdm',
         'vide',

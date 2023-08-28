@@ -1,4 +1,3 @@
-abel
 astropy
 emcee
 getdist
@@ -6,6 +5,7 @@ h5py
 healpy
 matplotlib
 numpy
+pyabel
 scipy
 tqdm
 vide
