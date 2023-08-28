@@ -37,6 +37,7 @@ setup(
     },
     install_requires=[
         'astropy',
+        'cython',
         'emcee',
         'getdist',
         'h5py',

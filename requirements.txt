@@ -1,4 +1,5 @@
 astropy
+cython
 emcee
 getdist
 h5py
