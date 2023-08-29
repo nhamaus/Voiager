@@ -90,7 +90,10 @@ print('=> Parameters: ',list(params.par.keys()),'\n',p1,'\n qper/qpar: \n',p1[:,
 
 
 print('MCMC sampling...')
-if os.path.exists(params.outPath+params.chainFile): print('=> Continuing from previous chain')
+if os.path.exists(params.outPath+params.chainFile):
+    if params.continueChain:
+          print('=> Continuing from previous chain')
+    else: print('=> Deleting previous chain'); os.remove(params.outPath+params.chainFile)
 if params.datavec=='1d': sampler = datalib.runMCMC(p1, xit, xi, xiC, xiCI, params.Nwalk, params.Nchain, params.chainFile)
 if params.datavec=='2d': sampler = datalib.runMCMC(p1, xi2dt, xi2d, xi2dC, xi2dCI, params.Nwalk, params.Nchain, params.chainFile)
 
@@ -137,7 +140,10 @@ DAHe.append(DAH_err)
 
 
 print('Constraining cosmology...')
-if os.path.exists(params.outPath+params.cosmoFile): print('=> Continuing from previous cosmology chain')
+if os.path.exists(params.outPath+params.cosmoFile):
+    if params.continueChain:
+          print('=> Continuing from previous chain')
+    else: print('=> Deleting previous chain'); os.remove(params.outPath+params.cosmoFile)
 sampler_cosmo = datalib.runMCMC_cosmo(zvi, DAH_fit, DAH_err, params.Nwalk, params.Nchain, params.cosmoFile, params.cosmology)
 
 # Load cosmology chains:

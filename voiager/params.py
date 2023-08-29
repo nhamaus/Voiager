@@ -16,11 +16,12 @@ tracerPath = basePath+'/catalogs/tracers/' # Location of tracer catalogs
 voidPath = basePath+'/catalogs/voids/' # Location of void catalogs
 outPath = basePath+'/results/'+survey+'/'+sample+version+'/' # Location to store output files
 plotPath = outPath+'/plots/' # Location to store plots
+figFormat = "pdf" # Format to save figures (e.g., pdf, png, jpg)
 columnNames = ['RA','DEC','Z_red'] # Tracer and random catalog column headers for right ascension, declination, redshift
 stackFile = "stacks.dat" # Filename for data of stacks
 chainFile = "chains.dat" # Filename for data of chains
 cosmoFile = "chains_"+cosmology+".dat" # Filename for data of cosmology chains
-figFormat = "pdf" # Format to save figures (e.g., pdf, png, jpg)
+continueChain = False # If True, continue sampling of previous chains. If False, delete old chains.
 
 
 # Void selection
@@ -35,7 +36,7 @@ mgsmin,mgsmax = 2.0,1e9 # Void radius range in units of mean galaxy separation (
 
 # Binning parameters
 vbin = 'zv' # 'zv': void-redshift bins, 'rv': void-radius bins
-binning = 'lin' # 'eqn': equal void-number bins, 'lin': linearly spaced bins, 'log': logarithmicly spaced bins
+binning = 'lin' # 'eqn': equal number of voids, 'lin': linearly spaced, 'log': logarithmicly spaced. Provide a list for custom bin edges.
 Nvbin = 2 # Number of void bins
 Nrbin = 20 # Number of radial bins in correlation function
 Nrskip = 1 # Number of radial bins to skip in fit (starting from the first bin)
