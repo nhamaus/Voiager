@@ -38,7 +38,7 @@ git clone https://github.com/nhamaus/Voiager.git
 cd Voiager
 pip install .
 ```
-External package requirements are provided in the file [requirements.txt](requirements.txt). Follow the instructions provided on the [VIDE wiki](https://bitbucket.org/cosmicvoids/vide_public/wiki/Home/) to install VIDE.
+External package requirements are provided in the file [requirements.txt](requirements.txt). Follow the instructions provided on the [VIDE wiki](https://bitbucket.org/cosmicvoids/vide_public/wiki/Home/) to install VIDE. For correctly rendering the plots you additionally need [LaTeX](https://texblog.org/installing-latex/).
 
 ## Usage
 
