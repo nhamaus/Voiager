@@ -49,7 +49,7 @@ python -i voiager/launch.py
 It is set up to perform an example run from the [Beyond-2pt](https://github.com/ANSalcedo/Beyond2ptMock) blind data challenge, based on a simulated light-cone in a *w*CDM cosmology ([C_mock_lightcone.h5](https://github.com/ANSalcedo/Beyond2ptMock/blob/main/C_mock_lightcone.h5)). The input data is retrieved from the [catalogs/](catalogs/) folder including void catalogs produced with [VIDE](https://bitbucket.org/cosmicvoids/vide_public/wiki/Home/), while the output of the code is stored in the [results/](results/) directory.
 
 
-*Note*: The example data in [catalogs/](catalogs/) and the example results in [results/](results/) are not automatically downloaded upon installation, but they can be accessed via the repository. The [catalogs/](catalogs/) folder can be downloaded as a compressed archive [here](https://github.com/nhamaus/Voiager/releases/download/v0.1.0/catalogs.tar.gz) and unpacked via
+*Note*: The example data in [catalogs/](catalogs/) and the example results in [results/](results/) are not automatically downloaded upon installation, but they can be accessed via the repository. The [catalogs/](catalogs/) folder can be downloaded as a compressed archive [catalogs.tar.gz](https://github.com/nhamaus/Voiager/releases/download/v0.1.0/catalogs.tar.gz) and unpacked via
 ```sh
 tar -xvzf catalogs.tar.gz
 ```
