@@ -36,7 +36,7 @@ mgsmin,mgsmax = 2.0,1e9 # Void radius range in units of mean galaxy separation (
 
 # Binning parameters
 vbin = 'zv' # 'zv': void-redshift bins, 'rv': void-radius bins
-binning = 'lin' # 'eqn': equal number of voids, 'lin': linearly spaced, 'log': logarithmicly spaced. Provide a list for custom bin edges.
+binning = 'lin' # 'eqn': equal number of voids, 'lin': linearly spaced, 'log': logarithmicly spaced. Alternatively, provide a list for custom bin edges.
 Nvbin = 2 # Number of void bins
 Nrbin = 20 # Number of radial bins in correlation function
 Nrskip = 1 # Number of radial bins to skip in fit (starting from the first bin)

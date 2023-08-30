@@ -192,7 +192,7 @@ def getBins(yv, binning='eqn', Nbin=4):
 
     Args:
         yv (ndarray,len(yv)): void property to use for binning
-        binning (str / list): 'eqn' for equal number of voids (default), 'lin' for linear, 'log' for logarithmic. Provide a list for custom bin edges.
+        binning (str / list): 'eqn' for equal number of voids (default), 'lin' for linear, 'log' for logarithmic. Alternatively, provide a list for custom bin edges.
         Nbin (int): number of bins (default = 4)
 
     Returns:
