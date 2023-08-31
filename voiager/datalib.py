@@ -18,7 +18,7 @@ from voiager import params
 ######## Data functions ########
 ################################
 
-def loadData(tracerPath, voidPath, survey, sample, random, version, columnNames, Nmock=1, mockid='_{0:04d}'):
+def loadData(tracerPath, voidPath, survey, sample, random, inputFormat, version, columnNames, Nmock=1, mockid='_{0:04d}'):
     """Load tracer and void catalogs (from observation or mocks).
 
     Args:
@@ -27,8 +27,9 @@ def loadData(tracerPath, voidPath, survey, sample, random, version, columnNames,
         survey (str): name of survey
         sample (str): name of tracer sample
         random (str): name of random sample
+        inputFormat (str): file type for input tracer and random catalogs
         version (str): name of void sample
-        columnNames (str list): names of column headers for [RA, DEC, Z] in tracer and random catalog
+        columnNames (str list): names of column headers for [RA, DEC, Z] in tracer and random catalog (angles in degrees)
         Nmock (int): number of mock realizations if Nmock > 1 (default = 1)
         mockid (str): format string for mock id in file names (e.g. '_1234' as default)
 
@@ -48,14 +49,14 @@ def loadData(tracerPath, voidPath, survey, sample, random, version, columnNames,
         mgs (ndarray,sum(Nvc)): mean tracer (galaxy) separation at void redshift in units of effective void radius
     """
     galaxyCatalog, voidCatalog = [],[]
-    randomFile = tracerPath+survey+'/'+sample+'/'+random+'.h5'
-    randomData = Table.read(randomFile,format='hdf5')
+    randomFile = tracerPath+survey+'/'+sample+'/'+random+'.'+inputFormat
+    randomData = Table.read(randomFile)
     randomCatalog = Table(randomData[columnNames], names=('RA','DEC','Z'))
 
     mocks = (mockid.format(i+1) for i in range(Nmock)) if (Nmock>1) else [''] # mock indices
     for idm in mocks:
-        galaxyFile = tracerPath+survey+'/'+sample+'/'+sample+idm+'.h5'
-        galaxyData = Table.read(galaxyFile,format='hdf5')
+        galaxyFile = tracerPath+survey+'/'+sample+'/'+sample+idm+'.'+inputFormat
+        galaxyData = Table.read(galaxyFile)
         galaxyCatalog.append(Table(galaxyData[columnNames], names=('RA','DEC','Z')))
         voidFile = voidPath+survey+'/sample_'+sample+version+idm
         voidCatalog.append(vu.loadVoidCatalog(voidFile, dataPortion="central", untrimmed=True, loadParticles=False))
