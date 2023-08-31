@@ -28,6 +28,7 @@ def loadData(tracerPath, voidPath, survey, sample, random, inputFormat, inputExt
         sample (str): name of tracer sample
         random (str): name of random sample
         inputFormat (str): file type for input tracer and random catalogs
+        inputExtension (str): filename extension for input tracer and random catalogs
         version (str): name of void sample
         columnNames (str list): names of column headers for [RA, DEC, Z] in tracer and random catalog (angles in degrees)
         Nmock (int): number of mock realizations if Nmock > 1 (default = 1)
