@@ -18,7 +18,7 @@ from voiager import params
 ######## Data functions ########
 ################################
 
-def loadData(tracerPath, voidPath, survey, sample, random, inputFormat, version, columnNames, Nmock=1, mockid='_{0:04d}'):
+def loadData(tracerPath, voidPath, survey, sample, random, inputFormat, inputExtension, version, columnNames, Nmock=1, mockid='_{0:04d}'):
     """Load tracer and void catalogs (from observation or mocks).
 
     Args:
@@ -49,14 +49,14 @@ def loadData(tracerPath, voidPath, survey, sample, random, inputFormat, version,
         mgs (ndarray,sum(Nvc)): mean tracer (galaxy) separation at void redshift in units of effective void radius
     """
     galaxyCatalog, voidCatalog = [],[]
-    randomFile = tracerPath+survey+'/'+sample+'/'+random+'.'+inputFormat
-    randomData = Table.read(randomFile)
+    randomFile = tracerPath+survey+'/'+sample+'/'+random+'.'+inputExtension
+    randomData = Table.read(randomFile, format=inputFormat)
     randomCatalog = Table(randomData[columnNames], names=('RA','DEC','Z'))
 
     mocks = (mockid.format(i+1) for i in range(Nmock)) if (Nmock>1) else [''] # mock indices
     for idm in mocks:
-        galaxyFile = tracerPath+survey+'/'+sample+'/'+sample+idm+'.'+inputFormat
-        galaxyData = Table.read(galaxyFile)
+        galaxyFile = tracerPath+survey+'/'+sample+'/'+sample+idm+'.'+inputExtension
+        galaxyData = Table.read(galaxyFile, format=inputFormat)
         galaxyCatalog.append(Table(galaxyData[columnNames], names=('RA','DEC','Z')))
         voidFile = voidPath+survey+'/sample_'+sample+version+idm
         voidCatalog.append(vu.loadVoidCatalog(voidFile, dataPortion="central", untrimmed=True, loadParticles=False))

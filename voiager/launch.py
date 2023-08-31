@@ -17,7 +17,7 @@ if not params.runExec:
 
 
 print('Loading data (angles, redshifts, catalog sizes, void properties)...')
-Ngc, Nvc, Xg, Xgr, Xv, rv, tv, dv, cv, mv, vv, Cv, ev, eval, evec, mgs = datalib.loadData(params.tracerPath, params.voidPath, params.survey, params.sample, params.random, params.inputFormat, params.version, params.columnNames, params.Nmock)
+Ngc, Nvc, Xg, Xgr, Xv, rv, tv, dv, cv, mv, vv, Cv, ev, eval, evec, mgs = datalib.loadData(params.tracerPath, params.voidPath, params.survey, params.sample, params.random, params.inputFormat, params.inputExtension, params.version, params.columnNames, params.Nmock)
 
 
 print('Generating void randoms...')
