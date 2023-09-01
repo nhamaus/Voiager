@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.cm as cm
 from scipy import optimize
 import getdist
 from getdist import plots
@@ -363,7 +362,7 @@ def xi_2d(xi2d, xi2dts, rmi2d, rvi, zvi, p1, chi2):
         else:
             rmi = rmi2d[i]
             xi = np.vstack((xi2d[i,::-1,:],xi2d[i]))
-        plt.pcolormesh(rmi/rvi[i], rmi/rvi[i], xi.T, cmap=cm.Spectral_r, vmin=vmin, vmax=vmax, shading='gouraud')
+        plt.pcolormesh(rmi/rvi[i], rmi/rvi[i], xi.T, cmap=plt.get_cmap('Spectral_r'), vmin=vmin, vmax=vmax, shading='gouraud')
         cbar = plt.colorbar(pad=0.03, format='%+.1f')
         cbar.solids.set_edgecolor("face")
         signal = plt.contour(rmi/rvi[i], rmi/rvi[i], xi.T, lev, vmin=vmin, vmax=vmax, colors='k', linewidths=0.3)
@@ -399,7 +398,7 @@ def xi_cov(xiC, dim=1):
         plt.axes().set_aspect('equal')
         coords = np.meshgrid(np.arange(len(xiC[i])),np.arange(len(xiC[i])))[0]/float(len(xiC[i]))
         matrix = xiC[i]/np.sqrt(np.outer(xiC[i].diagonal(), xiC[i].diagonal()))
-        pcol = plt.pcolor(coords[0], coords[1], matrix, cmap=cm.Spectral_r, rasterized=True, shading='auto') #, vmin=-1, vmax=1)
+        pcol = plt.pcolor(coords[0], coords[1], matrix, cmap=plt.get_cmap('Spectral_r'), rasterized=True, shading='auto') #, vmin=-1, vmax=1)
         pcol.set_edgecolor("face")
         cbar = plt.colorbar(pad=0.03, format='%.1f')
         cbar.solids.set_edgecolor("face")
@@ -585,3 +584,35 @@ def triangle_cosmo(samples, logP, pLim, cosmology, legend):
             if (j==k): ax.set_title('$'+pSample[0].getInlineLatex(names[j],limit=1,err_sig_figs=2)+'$',fontsize=12)
 
     gd.export(params.plotPath+'triangle_'+params.cosmology+'.'+params.figFormat)
+
+
+def logo(xi2dts, p1, vmin=-0.8, vmax=0.4, Nlev=10, cmap='Spectral_r'):
+    """Plot Voiager logo background.
+
+    Args:
+        xi2dts (ndarray,[Nvbin,10*Nspline,20*Nspline]): spline of theory model for POS vs. LOS 2d void-tracer correlation function
+        p1 (ndarray,[Nvbin,Npar]): best-fit model parameter values
+        vmin, vmax (float): minimum and maximum for contour map (default = -0.8, 0.4)
+        Nlev (int): number of contour lines (default = 10)
+        cmap (str): colormap from matplotlib (default = 'Spectral_r'), see https://matplotlib.org/stable/tutorials/colors/colormaps.html
+
+    Returns:
+        logo.png (png file): Voiager logo background
+    """
+    levels = np.linspace(vmin,vmax,Nlev) + 0.03 # contour values
+    for i in range(params.Nvbin):
+        plt.figure(figsize=figsize)
+        plt.axes().set_aspect('equal')
+        rpar = np.linspace(-params.rmax,params.rmax,2*10*params.Nspline) # for 2d splines (more nodes required)
+        rper = rpar[rpar > 0.]
+        plt.pcolormesh(rper, rpar, xi2dts[i](*p1[i]).T, cmap=plt.get_cmap(cmap), vmin=vmin, vmax=vmax, shading='auto')
+        plt.pcolormesh(-rper, rpar[::-1], xi2dts[i](*p1[i]).T, cmap=plt.get_cmap(cmap), vmin=vmin, vmax=vmax, shading='auto')
+        plt.contour(rper, rpar, xi2dts[i](*p1[i]).T, levels, vmin=vmin, vmax=vmax, colors='k', linewidths=0.5, alpha=0.5)
+        plt.contour(-rper, rpar[::-1], xi2dts[i](*p1[i]).T, levels, vmin=vmin, vmax=vmax, colors='k', linewidths=0.5, alpha=0.5)
+        xymax = np.floor(params.rmax/np.sqrt(2))
+        plt.xlim(np.array([-1,1])*xymax)
+        plt.ylim(np.array([-1,1])*xymax)
+        plt.xticks([])
+        plt.yticks([])
+        plt.savefig(params.plotPath+'logo_'+str(i+1)+'.png', format='png', bbox_inches="tight", dpi=800)
+        plt.clf()

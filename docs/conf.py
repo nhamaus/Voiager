@@ -48,4 +48,4 @@ pygments_style = 'sphinx'
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
-html_logo = 'voiager.jpg'
+html_logo = 'voiager.png'

@@ -199,6 +199,9 @@ plotlib.fs8_DAH(zvi, fs8f, fs8e, DAHf, DAHe, tags)
 plotlib.triangle([samples], p0, np.vstack((p1[:,0],p1[:,1]/p1[:,2],p1[:,2:].T)).T, rvi, zvi, pLim, ['qpar'])
 plotlib.triangle_cosmo(cosmo, logP_cosmo, pLim_cosmo, params.cosmology, tags)
 
+# Logo background
+plotlib.logo(xi2dts, p1, cmap='terrain') # color maps: terrain, bone, coolwarm, BrBG_r, YlGnBu_r, Spectral_r
+
 
 print('Done.')
 
