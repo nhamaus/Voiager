@@ -1,0 +1,96 @@
+Info: # Survey information
+  survey:    'Beyond2pt' # Name of survey
+  sample:    'C_mock_lightcone' # Name of tracer sample
+  random:    'C_mock_lightcone_R10' # Name of random sample
+  version:   '_0240' # Version (suffix) of void catalog
+  redshift:  [0.8,1.3] # Redshift range
+  sky:       3759.6159 # Sky area in square degrees (full sky ~ 41253)
+  cosmology: "wCDM" # Cosmological model to constrain (current options: "LCDM", "wCDM", "w0waCDM")
+
+
+IO: # Input / output
+  runExec:        True # If True, run executable when called
+  basePath:       '' # Location of the top level code directory relative to current working directory
+  tracerPath:     '/catalogs/tracers/' # Location of tracer catalogs relative to basePath
+  voidPath:       '/catalogs/voids/' # Location of void catalogs relative to basePath
+  outPath:        '/results/' # Location to store output files relative to basePath
+  plotPath:       '/plots/' # Location to store plots relative to outPath
+  inputFormat:    'hdf5' # Filetype for input tracer and random catalogs (supported types: https://docs.astropy.org/en/stable/io/unified.html)
+  inputExtension: 'h5' # Filename extension for input tracer and random catalogs
+  figFormat:      'pdf' # Format to save figures (e.g., pdf, png, jpg)
+  columnNames:    ['RA','DEC','Z_red'] # Tracer and random catalog column headers for right ascension, declination, redshift (angles in degrees)
+  stackFile:      'stacks' # Filename for data of stacks
+  chainFile:      'chains' # Filename for data of chains
+  continueChain:  False # If True, continue sampling of previous chains. If False, delete old chains.
+
+
+Selection: # Void selection
+  zv:  [0.8,1.3]   # Void redshift range
+  rv:  [35.,1.e+9] # Void radius range
+  mv:  [0.0,1.e+9] # Void mass range (number of tracers per void)
+  dv:  [0.0,1.e+9] # Void core (minimum) density range
+  Cv:  [0.0,1.e+9] # Void compensation range
+  ev:  [0.0,1.e+9] # Void ellipticity range
+  mgs: [2.0,1.e+9] # Void radius range in units of mean galaxy separation (mgs)
+
+
+Bins: # Binning parameters
+  vbin:      'zv' # 'zv': void-redshift bins, 'rv': void-radius bins
+  binning:   'lin' # 'eqn': equal number of voids, 'lin': linearly spaced, 'log': logarithmicly spaced. Alternatively, provide a list for custom bin edges
+  Nvbin:     2 # Number of void bins
+  Nrbin:     20 # Number of radial bins in correlation function
+  Nrskip:    1 # Number of radial bins to skip in fit (starting from the first bin)
+  rmax:      3. # Maximum radial distance in units of void radius
+  ell:       [0,2,4] # Multipole orders to consider
+  Nside:     128 # Mask resolution for generating random voids
+  symLOS:    True # If True, assume void-centric symmetry along LOS (no odd multipoles).
+  project2d: True # If True, the projected correlation function is calculated from the POS vs. LOS 2d correlation function
+  rescov:    False # If True, calculate covariance matrix for residuals between data and model (experimental!)
+  datavec:   '2d' # Define data vector, '1d': multipoles, '2d': POS vs. LOS 2d correlation function
+
+
+Computing: # Computing parameters
+  Ncpu:    16 # Number of CPUs to use
+  Nmock:   1 # Number of mock realizations (for observation = 1)
+  Nbin_nz: 20 # Number of bins for redshift distributions
+  Nbin_nv: 8 # Number of bins for void abundance function
+  Nspline: 200 # Number of nodes for splines (only for visualization in plots, does not affect fit)
+  Nsmooth: 0.5 # Smoothing factor for splines (for no smoothing = 0)
+  Nwalk:   16 # Number of MCMC walkers (ideally equal to Ncpu)
+  Nchain:  1000 # Length of each MCMC chain
+  Nburn:   3.0 # Initial burn-in steps of chain to discard, in units of auto-correlation time
+  Nthin:   0.5 # Thinning factor of chain, in units of auto-correlation time
+
+
+Model: # Model parameters with fiducial values and priors
+  par:
+    f/b:  0.5 # Redshift-space distortion parameter
+    qper: 1.0 # Perpendicular Alcock-Paczynski parameter
+    qpar: 1.0 # Parallel Alcock-Paczynski parameter
+    M:    1.0 # Monopole nuisance parameter
+    Q:    1.0 # Quadrupole nuisance parameter
+
+  prior:
+    f/b:  [-10.,10.]
+    qper: [-10.,10.]
+    qpar: [-10.,10.]
+    M:    [-10.,10.]
+    Q:    [-10.,10.]
+
+
+Cosmo: # Cosmological parameters with fiducial values and priors
+  par_cosmo:
+    Om: 0.24 # Omega_matter
+    Ok: 0.00 # Curvature
+    w0: -1.0 # DE eq. of state (constant)
+    wa: 0.00 # DE eq. of state (slope)
+    s8: 0.80 # RMS of density fluctuations of scale 8 Mpc/h
+    h:  0.70 # Reduced Hubble constant
+    b0: 1.40 # Linear tracer bias at z=0
+
+  prior_cosmo:
+    Om: [0.0,1.0]
+    w0: [-2,-0.333]
+    wa: [-10,10]
+
+  blind: True # If True, subtract mean of cosmology posterior

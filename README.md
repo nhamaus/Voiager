@@ -60,13 +60,13 @@ python -m voiager
 ```
 or by calling the executable `voiager` from the terminal.
 
-*Note*: When running the installed code you always have to upgrade the installation after making changes to [params.py](voiager/params.py). This is done via:
+*Note*: All the parameters of *Voiager* are configured in the file [params.yaml](voiager/params.yaml), which is used as default configuration. You can also point to your customized parameter file in [yaml](https://pyyaml.org/) format like this:
 ```sh
-pip install . --upgrade
+voiager 'path/to/parameter_file.yaml'
 ```
 Previously calculated data vectors are saved in the file [stacks.dat](/results/Beyond2pt/C_mock_lightcone_0240/stacks.dat), this step in the pipeline will be skipped in case the file already exists (i.e., it needs to be removed to start a new calculation). Similarly, the files named [chains.dat](/results/Beyond2pt/C_mock_lightcone_0240/chains.dat) contain previously run MCMCs, which the code will continue sampling when found. Human readable ASCII versions of the chains are also produced.
 
-The file [params.py](voiager/params.py) contains the main adjustable parameters of the code, each of which appears with a brief comment about its meaning.
+The file [params.yaml](voiager/params.yaml) contains the main adjustable parameters of the code, each of which appears with a brief comment about its meaning.
 
 
 ## Publications

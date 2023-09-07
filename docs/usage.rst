@@ -30,15 +30,15 @@ or by calling the executable ``voiager`` from the terminal. This will produce th
     :language: python
 
 .. note::
-    When running the installed code you always have to upgrade the installation after making changes to `params.py <https://github.com/nhamaus/Voiager/blob/main/voiager/params.py>`_. This is done via:
+    All the parameters of *Voiager* are configured in the file `params.yaml <https://github.com/nhamaus/Voiager/blob/main/voiager/params.yaml>`_, which is used as default configuration. You can also point to your customized parameter file in `yaml <https://pyyaml.org/>`_ format like this:
     
     .. code-block:: bash
    
-        pip install . --upgrade
+        voiager 'path/to/parameter_file.yaml'
     
     Previously calculated data vectors are saved in the file `stacks.dat <https://github.com/nhamaus/Voiager/blob/main/results/Beyond2pt/C_mock_lightcone_0240/stacks.dat>`_, this step in the pipeline will be skipped in case the file already exists (i.e., it needs to be removed to start a new calculation). Similarly, the files named `chains.dat <https://github.com/nhamaus/Voiager/blob/main/results/Beyond2pt/C_mock_lightcone_0240/chains.dat>`_ contain previously run MCMCs, which the code will continue sampling when found. Human readable ASCII versions of the chains are also produced.
 
-The file `params.py <https://github.com/nhamaus/Voiager/blob/main/voiager/params.py>`_ contains the main adjustable parameters of the code, each of which appears with a brief comment about its meaning:
+The file `params.yaml <https://github.com/nhamaus/Voiager/blob/main/voiager/params.yaml>`_ contains the main adjustable parameters of the code, each of which appears with a brief comment about its meaning:
 
-.. literalinclude:: ../voiager/params.py
-    :language: python
+.. literalinclude:: ../voiager/params.yaml
+    :language: yaml

@@ -45,6 +45,7 @@ setup(
         'matplotlib',
         'numpy',
         'pyabel',
+        'pyyaml',
         'scipy',
         'tqdm',
         'vide',

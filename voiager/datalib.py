@@ -11,8 +11,7 @@ from astropy.cosmology import FlatLambdaCDM
 import emcee
 import healpy
 import vide.voidUtil as vu
-from voiager import params
-
+from voiager import *
 
 ################################
 ######## Data functions ########
@@ -64,20 +63,20 @@ def loadData(tracerPath, voidPath, survey, sample, random, inputFormat, inputExt
 
     Ngc = []
     for (i,gC) in enumerate(galaxyCatalog):
-        galaxyCatalog[i] = gC[(gC['Z'] >= params.zmin) & (gC['Z'] <= params.zmax)]
+        galaxyCatalog[i] = gC[(gC['Z'] >= zmin) & (gC['Z'] <= zmax)]
         Ngc.append(len(galaxyCatalog[i]))
 
     galaxyCatalog = vstack(galaxyCatalog, join_type='exact')
-    randomCatalog = randomCatalog[(randomCatalog['Z'] > params.zmin) & (randomCatalog['Z'] < params.zmax)]
+    randomCatalog = randomCatalog[(randomCatalog['Z'] > zmin) & (randomCatalog['Z'] < zmax)]
 
     # Galaxies
     Xg = np.vstack([np.array(galaxyCatalog['RA']),np.array(galaxyCatalog['DEC']),np.array(galaxyCatalog['Z'])]).T
-    Xg[:,0:2] *= params.DegRad
-    zgm, ngm = numberDensity(Xg[:,2], params.Nbin_nz, params.sky, Nmock)
+    Xg[:,0:2] *= DegRad
+    zgm, ngm = numberDensity(Xg[:,2], Nbin_nz, sky, Nmock)
 
     # Randoms
     Xr = np.vstack([np.array(randomCatalog['RA']),np.array(randomCatalog['DEC']),np.array(randomCatalog['Z'])]).T
-    Xr[:,0:2] *= params.DegRad
+    Xr[:,0:2] *= DegRad
 
     # Voids
     Nvc, Xv, rv, tv, dv, cv, mv, vv, Cv, ev, eval, evec, mgs = [],[],[],[],[],[],[],[],[],[],[],[],[]
@@ -101,13 +100,13 @@ def loadData(tracerPath, voidPath, survey, sample, random, inputFormat, inputExt
         mgs.append((4*np.pi/3*np.interp(Xv[i][:,2],zgm,ngm))**(-1./3.) / rv[i])
 
         # Filter voids
-        idx_zv = (Xv[i][:,2] >= params.zvmin) & (Xv[i][:,2] <= params.zvmax)
-        idx_rv = (rv[i] >= params.rvmin) & (rv[i] <= params.rvmax)
-        idx_mv = (mv[i] >= params.mvmin) & (mv[i] <= params.mvmax)
-        idx_dv = (dv[i] >= params.dvmin) & (dv[i] <= params.dvmax)
-        idx_Cv = (Cv[i] >= params.Cvmin) & (Cv[i] <= params.Cvmax)
-        idx_ev = (ev[i] >= params.evmin) & (ev[i] <= params.evmax)
-        idx_mgs = (mgs[i] <= 1/params.mgsmin) & (mgs[i] >= 1/params.mgsmax)
+        idx_zv = (Xv[i][:,2] >= zvmin) & (Xv[i][:,2] <= zvmax)
+        idx_rv = (rv[i] >= rvmin) & (rv[i] <= rvmax)
+        idx_mv = (mv[i] >= mvmin) & (mv[i] <= mvmax)
+        idx_dv = (dv[i] >= dvmin) & (dv[i] <= dvmax)
+        idx_Cv = (Cv[i] >= Cvmin) & (Cv[i] <= Cvmax)
+        idx_ev = (ev[i] >= evmin) & (ev[i] <= evmax)
+        idx_mgs = (mgs[i] <= 1/mgsmin) & (mgs[i] >= 1/mgsmax)
         idx = idx_zv & idx_rv & idx_mv & idx_dv & idx_Cv & idx_ev & idx_mgs
         Nvc.append(sum(idx))
         Xv[i] = Xv[i][idx]
@@ -136,7 +135,7 @@ def loadData(tracerPath, voidPath, survey, sample, random, inputFormat, inputExt
     evec = np.vstack(evec)
     mgs = np.hstack(mgs)
 
-    Xv[:,0:2] *= params.DegRad
+    Xv[:,0:2] *= DegRad
     del galaxyCatalog,randomCatalog
     gc.collect()
 
@@ -171,7 +170,7 @@ def makeRandom(X, N=10., Nside=128, rv=None, seed=1):
     Xr[:,1] = np.arccos(1.-2*Xr[:,1]) # Dec
     Xr[:,2] = Xr[:,2]*(X[:,2].max()-X[:,2].min()) + X[:,2].min() # Redshift
 
-    (n,z) = np.histogram(X[:,2], bins=params.Nbin_nz) # Calculate n(z) from catalog
+    (n,z) = np.histogram(X[:,2], bins=Nbin_nz) # Calculate n(z) from catalog
     nr = np.interp(Xr[:,2],(z[:-1]+z[1:])/2.,n) # Interpolate n(z) for randoms
     Xr[:,2] = np.random.choice(Xr[:,2],int(N*len(X)/skyfrac),p=nr/np.sum(nr)) # Draw a random realization from that n(z)
 
@@ -200,13 +199,17 @@ def getBins(yv, binning='eqn', Nbin=4):
     Returns:
         bins (ndarray,Nbin+1): bin edges
     """
-    if binning == 'lin': bins = yv.min() + (yv.max() - yv.min())* np.linspace(0,1,Nbin+1)
-    if binning == 'log': bins = yv.min() * (yv.max() / yv.min())**np.linspace(0,1,Nbin+1)
-    if binning == 'eqn':
+    if  binning == 'eqn':
         bins = np.zeros(Nbin+1)
         bins[-1] = yv.max()
         bins[:-1] = [np.array_split(np.sort(yv),Nbin)[i][0] for i in range(Nbin)]
-    else: bins = binning
+    elif binning == 'lin':
+        bins = yv.min() + (yv.max() - yv.min())* np.linspace(0,1,Nbin+1)
+    elif binning == 'log':
+        bins = yv.min() * (yv.max() / yv.min())**np.linspace(0,1,Nbin+1)
+    elif type(binning) is list:
+        bins = binning
+    else: print("Binning scheme not recognized! Options: 'eqn', 'lin', 'log', list")
     return bins
 
 
@@ -224,7 +227,7 @@ def numberDensity(z, Nbin, sky, Nmock=1):
         nm (ndarray,Nbin): mean number density
     """
     nm, zm = np.histogram(z, bins=Nbin)
-    Vol = sky*params.DegRad**2/3*(DA0(zm[1:])**3 - DA0(zm[:-1])**3)
+    Vol = sky*DegRad**2/3*(DA0(zm[1:])**3 - DA0(zm[:-1])**3)
     zm = (zm[1:]+zm[:-1])/2
     nm = nm/Vol/Nmock
     return zm, nm
@@ -249,8 +252,8 @@ def voidAbundance(yv, Nbin, zmin, zmax, sky, Nmock=1):
     nm,ym = np.histogram(yv,Nbin)
     ym = (ym[1:]+ym[:-1])/2.
     dym = (ym[1:]-ym[:-1]).mean()
-    Vol = sky*params.DegRad**2/3*(DA0(zmax)**3 - DA0(zmin)**3)
-    nm = nm/Vol/dym*ym/params.Nmock
+    Vol = sky*DegRad**2/3*(DA0(zmax)**3 - DA0(zmin)**3)
+    nm = nm/Vol/dym*ym/Nmock
     nE = np.sqrt(nm/Vol/dym*ym)
     return ym, nm, nE
 
@@ -290,7 +293,7 @@ def mockShift(x, N, Nmock=1, Lmock=1e5):
     return xs
 
 
-def getStack(xv, xg, rv, zv, Nv, Ng, ngz, zgm, wg=None, rmax=3, Nbin=25, ell=(0,), dim=1, Nmock=1):
+def getStack(xv, xg, rv, zv, Nv, Ng, ngz, zgm, wg=None, rmax=3, Nbin=25, ell=[0,], dim=1, Nmock=1):
     """Stacked void density profiles from tracer (galaxy) distribution, as a function of void-centric distance in units of effective void radius.
 
     Args:
@@ -305,7 +308,7 @@ def getStack(xv, xg, rv, zv, Nv, Ng, ngz, zgm, wg=None, rmax=3, Nbin=25, ell=(0,
         wg (ndarray,len(wg)): weights for tracers (default = None)
         rmax (float): maximum distance from void center in units of effective void radius (default = 3)
         Nbin (int): number of distance bins per dimension  (default = 25)
-        ell (int tuple): multipole orders to calculate [default = (0,)]
+        ell (int list): multipole orders to calculate [default = [0,]]
         dim (int): dimension of data vector [0: projected, 1: multipoles (default), 2: POS vs. LOS]
         Nmock (int): number of mock catalogs (default = 1)
 
@@ -323,13 +326,13 @@ def getStack(xv, xg, rv, zv, Nv, Ng, ngz, zgm, wg=None, rmax=3, Nbin=25, ell=(0,
 
     # Mean tracer density at center position:
     ngz = np.interp(zv,zgm,ngz)
-    if dim==0: ngz *= rv # 2*params.rmax
+    if dim==0: ngz *= rv # 2*rmax
 
     # Perform stack
     prof = partial(profile, xv, xg, xvs, xgs, rv, ngz, wg, rmax, Nbin, ell, dim)
-    idv = np.array_split(range(len(xv)),params.Ncpu)
+    idv = np.array_split(range(len(xv)),Ncpu)
     #n = profile(range(len(xv))) # Serial
-    pool = mp.Pool(processes=params.Ncpu) # Parallel
+    pool = mp.Pool(processes=Ncpu) # Parallel
     n = pool.map(prof, idv)
     pool.close(); pool.join()
     n = np.hstack(n)
@@ -349,7 +352,7 @@ def profile(xv, xg, xvs, xgs, rv, ngz, wg, rmax, Nbin, ell, dim, idv):
     return prof(idv)
 
 
-def profile1(xv, xg, xvs, xgs, xgTree, rv, ngz, wg=None, rmax=3, Nbin=25, ell=(0,), dim=1, idv=0):
+def profile1(xv, xg, xvs, xgs, xgTree, rv, ngz, wg=None, rmax=3, Nbin=25, ell=[0,], dim=1, idv=0):
     """Individual void density profile from tracer (galaxy) distribution, as a function of void-centric distance in units of effective void radius.
 
     Args:
@@ -363,7 +366,7 @@ def profile1(xv, xg, xvs, xgs, xgTree, rv, ngz, wg=None, rmax=3, Nbin=25, ell=(0
         wg (ndarray,len(wg)): weights for tracers (default = None)
         rmax (float): maximum distance from void center in units of effective void radius (default = 3)
         Nbin (int): number of distance bins per dimension (default = 25)
-        ell (int tuple): multipole orders to calculate [default = (0,)]
+        ell (int list): multipole orders to calculate [default = [0,]]
         dim (int): dimension of data vector [0: projected, 1: multipoles (default), 2: POS vs. LOS]
         idv (int): void id (default = 0)
 
@@ -413,7 +416,7 @@ def profile1(xv, xg, xvs, xgs, xgTree, rv, ngz, wg=None, rmax=3, Nbin=25, ell=(0
 
     elif dim==2: # POS vs. LOS profile
         xper = np.sqrt(abs(dx**2-xpar**2))
-        if params.symLOS: # Symmetrize along LOS:
+        if symLOS: # Symmetrize along LOS:
             n,r,rr = np.histogram2d(xper, abs(xpar), bins=[Nbin,Nbin], range=[[0,rmax],[0,rmax]], weights=wg)
             n /= 2.
         else:
@@ -424,7 +427,7 @@ def profile1(xv, xg, xvs, xgs, xgTree, rv, ngz, wg=None, rmax=3, Nbin=25, ell=(0
     return n/ngz
 
 
-def getData(DDp, DRp, RDp, RRp, DD, DR, RD, RR, DD2d, DR2d, RD2d, RR2d, rv, rvr, zv, zvr, Nvbin=4, Nrbin=25, rmax=3, ell=(0,), symLOS=True, project2d=True, rescov=False):
+def getData(DDp, DRp, RDp, RRp, DD, DR, RD, RR, DD2d, DR2d, RD2d, RR2d, rv, rvr, zv, zvr, Nvbin=4, Nrbin=25, rmax=3, ell=[0,], symLOS=True, project2d=True, rescov=False):
     """Retrieve data vectors for two-point correlations and covariances.
 
     Args:
@@ -438,7 +441,7 @@ def getData(DDp, DRp, RDp, RRp, DD, DR, RD, RR, DD2d, DR2d, RD2d, RR2d, rv, rvr,
         Nvbin (int): number of void bins (default = 4)
         Nrbin (int): number of distance bins per dimension (default = 25)
         rmax (float): maximum distance from void center in units of effective void radius (default = 3)
-        ell (int tuple): multipole orders to calculate [default = (0,)]
+        ell (int list): multipole orders to calculate [default = [0,]]
         symLOS (bool): if True, assume symmetry along LOS
         project2d (bool): if True, use POS vs. LOS void density profiles to calculate projected void density profiles (default = True)
         rescov (bool): if True, calculate covariance matrix for residuals between data and model (default = False, experimental!)
@@ -464,9 +467,9 @@ def getData(DDp, DRp, RDp, RRp, DD, DR, RD, RR, DD2d, DR2d, RD2d, RR2d, rv, rvr,
     zvi = np.zeros(Nvbin)
     rmi = np.zeros((Nvbin,Nrbin))
     rm = np.linspace(0,rmax,Nrbin+1)
-    Npar = len(params.par.values())
+    Npar = len(par.values())
     p0 = np.zeros((Nvbin,Npar))
-    p0[:] = list(params.par.values())
+    p0[:] = list(par.values())
 
     # Projected correlation
     if not project2d:
@@ -496,9 +499,9 @@ def getData(DDp, DRp, RDp, RRp, DD, DR, RD, RR, DD2d, DR2d, RD2d, RR2d, rv, rvr,
                 V2d[i,j] = np.pi*(r2d[Nrbin+i+1]**2-r2d[Nrbin+i]**2)*(r2d[j+1]-r2d[j])
 
     # Define binning
-    if params.vbin == 'rv': yv, yvr = np.copy([rv,rvr])
-    if params.vbin == 'zv': yv, yvr = np.copy([zv,zvr])
-    bins = getBins(yv,params.binning,Nvbin)
+    if vbin == 'rv': yv, yvr = np.copy([rv,rvr])
+    if vbin == 'zv': yv, yvr = np.copy([zv,zvr])
+    bins = getBins(yv,binning,Nvbin)
 
     # Stack individual void profiles and normalize by shell volumes (not necessary, but useful. Cancels out in LS estimator)
     DDpj, DRpj, DDj, DRj, DD2dj, DR2dj = [],[],[],[],[],[]
@@ -534,12 +537,12 @@ def getData(DDp, DRp, RDp, RRp, DD, DR, RD, RR, DD2d, DR2d, RD2d, RR2d, rv, rvr,
 
         # Jackknives
         if not project2d:
-            DDpj.append(jackknife(DDp[idx], DDpm[i], rv[idx], Vp, dim=2, Ncpu=params.Ncpu))
-            DRpj.append(jackknife(DRp[idx], DRpm[i], rv[idx], Vp, dim=2, Ncpu=params.Ncpu))
-        DDj.append(jackknife(DD[idx], DDm[i], rv[idx], V, dim=3, Ncpu=params.Ncpu))
-        DRj.append(jackknife(DR[idx], DRm[i], rv[idx], V, dim=3, Ncpu=params.Ncpu))
-        DD2dj.append(jackknife(DD2d[idx], DD2dm[i], rv[idx], V2d, dim=3, Ncpu=params.Ncpu))
-        DR2dj.append(jackknife(DR2d[idx], DR2dm[i], rv[idx], V2d, dim=3, Ncpu=params.Ncpu))
+            DDpj.append(jackknife(DDp[idx], DDpm[i], rv[idx], Vp, dim=2, Ncpu=Ncpu))
+            DRpj.append(jackknife(DRp[idx], DRpm[i], rv[idx], Vp, dim=2, Ncpu=Ncpu))
+        DDj.append(jackknife(DD[idx], DDm[i], rv[idx], V, dim=3, Ncpu=Ncpu))
+        DRj.append(jackknife(DR[idx], DRm[i], rv[idx], V, dim=3, Ncpu=Ncpu))
+        DD2dj.append(jackknife(DD2d[idx], DD2dm[i], rv[idx], V2d, dim=3, Ncpu=Ncpu))
+        DR2dj.append(jackknife(DR2d[idx], DR2dm[i], rv[idx], V2d, dim=3, Ncpu=Ncpu))
 
     # Mean of RR2d inside void radius
     indmax = int(len(RR2dm[0])/rmax)
@@ -583,7 +586,7 @@ def getData(DDp, DRp, RDp, RRp, DD, DR, RD, RR, DD2d, DR2d, RD2d, RR2d, rv, rvr,
 
         # Jackknives of model
             if rescov:
-                p0[:,0] = f_b_z(zvi, params.par_cosmo) # Fiducial f/b values
+                p0[:,0] = f_b_z(zvi, par_cosmo) # Fiducial f/b values
                 ximj[i,j] = getModel(rmi,rmi2d,rvi,xipj[:,j,:],xipj[:,j,:],0.)[2][i](*p0[i])
                 xi2dmj[i,j,:-Nrcut,:-Nrcut] = getModel(rmi,rmi2d[:,:-Nrcut],rvi,xipj[:,j,:],xipj[:,j,:],0.)[3][i](*p0[i])
 
@@ -646,7 +649,7 @@ def estimator(DDm, DRm, RDm, RRm, dim=1):
         xi (ndarray,*): void-tracer correlation function [0: projected, 1: multipoles (default), 2: POS vs. LOS]
     """
     if dim==0: # projected correlation
-        xi = np.divide(DDm - DRm - RDm + RRm, RRm, where=(RRm!=0.))*2*params.rmax # Multiply by projection range
+        xi = np.divide(DDm - DRm - RDm + RRm, RRm, where=(RRm!=0.))*2*rmax # Multiply by projection range
     if dim==1: # multipoles
         xi = np.divide(DDm - DRm - RDm + RRm, RRm[0,:], where=(RRm[0,:]!=0.)) # Only divide by RR monopole
     if dim==2: # POS vs. LOS 2d correlation
@@ -726,7 +729,7 @@ def getModel(rmi, rmi2d, rvi, xip, xipE, Nsmooth=0., Nspline=200, weight=None):
     Nrbin = len(rmi[0])
 
     if Nsmooth>0.:
-        rs = np.linspace((rmi[0]/rvi[0]).min(),(rmi[0]/rvi[0]).max(),Nspline)  # np.linspace(1e-3,params.rmax,Nspline)
+        rs = np.linspace((rmi[0]/rvi[0]).min(),(rmi[0]/rvi[0]).max(),Nspline)  # np.linspace(1e-3,rmax,Nspline)
         xips = np.zeros((Nvbin,len(rs)))
         for i in range(Nvbin):
             w = weight[i]/weight[i].mean() if weight is not None else None
@@ -759,11 +762,11 @@ def getModel(rmi, rmi2d, rvi, xip, xipE, Nsmooth=0., Nspline=200, weight=None):
     # Theory model correlation functions
     xit,xits,xi2dt,xi2dts = [],[],[],[]
     for i in range(Nvbin):
-        xit.append(partial(xi_model, params.ell, rmi[i], rmi[i], xid[i], Xid[i])) # no spline
+        xit.append(partial(xi_model, ell, rmi[i], rmi[i], xid[i], Xid[i])) # no spline
         xi2dt.append(partial(xi_model, None, rmi2d[i], rmi[i], xid[i], Xid[i]))
         if Nsmooth>0.:
-            rspar = np.linspace(-params.rmax,params.rmax,2*10*Nspline) # for 2d splines (more nodes required)
-            xits.append(partial(xi_model, params.ell, rs, rs, xids[i], Xids[i]))
+            rspar = np.linspace(-rmax,rmax,2*10*Nspline) # for 2d splines (more nodes required)
+            xits.append(partial(xi_model, ell, rs, rs, xids[i], Xids[i]))
             xi2dts.append(partial(xi_model, None, rspar, rs, xids[i], Xids[i]))
 
     if Nsmooth>0.:
@@ -793,15 +796,14 @@ def bestFit(zvi, xit, xi, xiC, xiCI):
     """
     Nvbin = len(zvi)
     Nrbin = len(xi[0,0])
-    Nrskip = params.Nrskip
-    Npar = len(params.par.values())
+    Npar = len(par.values())
     p0 = np.zeros((Nvbin,Npar))
-    p0[:] = list(params.par.values())
-    p0[:,0] = f_b_z(zvi, params.par_cosmo)
-    pr = list(params.prior.values()) # prior
+    p0[:] = list(par.values())
+    p0[:,0] = f_b_z(zvi, par_cosmo)
+    pr = list(prior.values()) # prior
 
-    if params.datavec=='1d': Ndof = len(params.ell)*(Nrbin-Nrskip) - Npar
-    if params.datavec=='2d': Ndof = len(xi[0])**2 - Nrskip**2 - Npar if params.symLOS else 2*(len(xi[0])**2-Nrskip**2) - Npar
+    if datavec=='1d': Ndof = len(ell)*(Nrbin-Nrskip) - Npar
+    if datavec=='2d': Ndof = len(xi[0])**2 - Nrskip**2 - Npar if symLOS else 2*(len(xi[0])**2-Nrskip**2) - Npar
 
     p1, chi2 = np.zeros((Nvbin,Npar)), np.zeros(Nvbin)
     for i in range(Nvbin):
@@ -843,7 +845,7 @@ def Chi2(par, prior, xit, xi, xiC, xiCI, Ndof):
     Returns:
         chi2 (float): reduced chi-squared value
     """
-    chi2 = -2*lnL(par, prior, xit, xi, xiC, xiCI)*params.Nmock/float(Ndof)
+    chi2 = -2*lnL(par, prior, xit, xi, xiC, xiCI)*Nmock/float(Ndof)
     return chi2
 
 
@@ -860,14 +862,13 @@ def lnL(par, prior, xit, xi, xiC, xiCI):
     Returns:
         lnL (float): Logarithm of the likelihood multiplied by the prior
     """
-    Nrskip = params.Nrskip
     Delta = xi - xit(*par)
-    if len(Delta)==len(params.ell): Delta[:,:Nrskip] = 0.
-    elif params.symLOS: Delta[:Nrskip,:Nrskip] = 0.
+    if len(Delta)==len(ell): Delta[:,:Nrskip] = 0.
+    elif symLOS: Delta[:Nrskip,:Nrskip] = 0.
     else: Delta[:Nrskip,len(Delta)-Nrskip:len(Delta)+Nrskip] = 0.
     Delta = Delta.flatten()
-    lnL = -0.5*np.dot(Delta,np.dot(xiCI,Delta))/params.Nmock # -0.5*np.linalg.slogdet(xiC)[1]
-    #lnL = np.sum(-0.5*np.dot(Delta,Delta)/xiC.diagonal())/params.Nmock
+    lnL = -0.5*np.dot(Delta,np.dot(xiCI,Delta))/Nmock # -0.5*np.linalg.slogdet(xiC)[1]
+    #lnL = np.sum(-0.5*np.dot(Delta,Delta)/xiC.diagonal())/Nmock
     return lnL + lnP(par,prior)
 
 
@@ -905,24 +906,24 @@ def runMCMC(p1, xit, xi, xiC, xiCI, Nwalk, Nchain, filename):
     """
     sampler = []
     Nvbin = len(p1)
-    Npar = len(params.par.values())
-    pr = list(params.prior.values()) # prior
+    Npar = len(par.values())
+    pr = list(prior.values()) # prior
     for i in range(Nvbin):
         #backend.reset(Nwalk, Npar)
         #sampler[i].reset()
-        backend = emcee.backends.HDFBackend(params.outPath+filename, name=params.vbin+str(i)) # emcee.backends.Backend()
+        backend = emcee.backends.HDFBackend(outPath+filename, name=vbin+str(i)) # emcee.backends.Backend()
 
         # Ball around best fit as initial parameter values, uniform-randomly distributed with maximum relative error of 5%
         p1i = p1[i]*(1. + 0.1*(np.random.rand(Nwalk,Npar)-0.5))
-        if params.datavec=='1d':
+        if datavec=='1d':
             pool = mp.Pool()
             sampler.append(emcee.EnsembleSampler(Nwalk, Npar, lnL, pool=pool, args=[pr, xit[i], xi[i], xiC[i], xiCI[i]], backend=backend))
-        if params.datavec=='2d':
+        if datavec=='2d':
             sampler.append(emcee.EnsembleSampler(Nwalk, Npar, lnL, args=[pr, xit[i], xi[i], xiC[i], xiCI[i]], backend=backend))
 
         pos, prob, state = sampler[i].run_mcmc(p1i, Nchain, progress=True)
 
-        if params.datavec=='1d': pool.close(); pool.join()
+        if datavec=='1d': pool.close(); pool.join()
 
     # Diagnostics:
     #acf, act, iact, pMean1, pMean2, pStd1, pStd2 = [],[],[],[],[],[],[]
@@ -957,8 +958,8 @@ def loadMCMC(filename, Nburn, Nthin, Nmarg=4.):
         pLim (ndarray list,[Nvbin,Npar,2]): limits for parameter margins around their mean value in plots (Nmarg*pStd on each side)
     """
     samples, act, logP, pMean, pStd, pErr, pLim = [],[],[],[],[],[],[]
-    for i in range(params.Nvbin):
-        reader = emcee.backends.HDFBackend(params.outPath+filename, name=params.vbin+str(i))
+    for i in range(Nvbin):
+        reader = emcee.backends.HDFBackend(outPath+filename, name=vbin+str(i))
         act.append(reader.get_autocorr_time(tol=0).mean())
         samples.append(reader.get_chain(discard=int(Nburn*act[i]), thin=int(Nthin*act[i]), flat=True))
         samples[i][:,1] /= samples[i][:,2] # AP parameter epsilon
@@ -1011,16 +1012,16 @@ def runMCMC_cosmo(z, DAH_fit, DAH_err, Nwalk, Nchain, filename, cosmology='LCDM'
     Returns:
         sampler (emcee object): EnsembleSampler class containing the chains for cosmological parameters
     """
-    backend = emcee.backends.HDFBackend(params.outPath+filename, name=cosmology)
+    backend = emcee.backends.HDFBackend(outPath+filename, name=cosmology)
     if cosmology=='LCDM':
-        p0 = [params.par_cosmo['Om']] # initial value
-        pr = [params.prior_cosmo['Om']] # prior
+        p0 = [par_cosmo['Om']] # initial value
+        pr = [prior_cosmo['Om']] # prior
     if cosmology=='wCDM':
-        p0 = [params.par_cosmo['Om'],params.par_cosmo['w0']]
-        pr = [params.prior_cosmo['Om'],params.prior_cosmo['w0']]
+        p0 = [par_cosmo['Om'],par_cosmo['w0']]
+        pr = [prior_cosmo['Om'],prior_cosmo['w0']]
     if cosmology=='w0waCDM':
-        p0 = [params.par_cosmo['Om'],params.par_cosmo['w0'],params.par_cosmo['wa']]
-        pr = [params.prior_cosmo['Om'],params.prior_cosmo['w0'],params.prior_cosmo['wa']]
+        p0 = [par_cosmo['Om'],par_cosmo['w0'],par_cosmo['wa']]
+        pr = [prior_cosmo['Om'],prior_cosmo['w0'],prior_cosmo['wa']]
     Npar = len(p0)
     # Ball around fiducial cosmology as initial values, uniform-randomly distributed with maximum absolute error of 5%
     p1i = p0 + 0.1*(np.random.rand(Nwalk,Npar)-0.5)
@@ -1050,7 +1051,7 @@ def loadMCMC_cosmo(filename, cosmology, Nburn, Nthin, Nmarg=4., blind=False):
         pErr (ndarray,Npar): relative errors of parameters (pStd/pMean) \n
         pLim (ndarray,[Npar,2]): limits for parameter margins around their mean value in plots (Nmarg*pStd on each side)
     """
-    reader = emcee.backends.HDFBackend(params.outPath+filename, name=cosmology)
+    reader = emcee.backends.HDFBackend(outPath+filename, name=cosmology)
     act = reader.get_autocorr_time(tol=0).mean()
     samples = reader.get_chain(discard=int(Nburn*act), thin=int(Nthin*act), flat=True)
     logP = reader.get_log_prob(discard=int(Nburn*act), thin=int(Nthin*act), flat=True)
@@ -1072,32 +1073,32 @@ def loadMCMC_cosmo(filename, cosmology, Nburn, Nthin, Nmarg=4., blind=False):
 ############################
 
 @np.vectorize
-def DH(z, par):
+def DH(z, par_cosmo):
     """Hubble distance D_H(z) = c/H(z) in units of Mpc/h in flat LCDM.
 
     Args:
         z (ndarray,len(z)): redshifts
-        par (dict,len(par)): dictionary of cosmological parameter values
+        par_cosmo (dict,len(par)): dictionary of cosmological parameter values
 
     Returns:
         DH (ndarray,len(z)): Hubble distance D_H(z) = c/H(z)
     """
-    DH = params.c/(100*np.sqrt(par['Om']*(1.+z)**3 + 1. - par['Om']))
+    DH = c/(100*np.sqrt(par_cosmo['Om']*(1.+z)**3 + 1. - par_cosmo['Om']))
     return DH
 
 
 @np.vectorize
-def DA(z, par):
+def DA(z, par_cosmo):
     """Comoving angular diameter distance D_A(z) in units of Mpc/h in flat LCDM.
 
     Args:
         z (ndarray,len(z)): redshifts
-        par (dict,len(par)): dictionary of cosmological parameter values
+        par_cosmo (dict,len(par)): dictionary of cosmological parameter values
 
     Returns:
         DA (ndarray,len(z)): Comoving angular diameter distance D_A(z)
     """
-    DA = integrate.quad(DH, 0., z, args=(par))[0]
+    DA = integrate.quad(DH, 0., z, args=(par_cosmo))[0]
     return DA
 
 
@@ -1110,7 +1111,7 @@ def DA0(z):
     Returns:
         DA0 (ndarray,len(z)): Comoving angular diameter distance D_A(z)
     """
-    DA0 = np.array(FlatLambdaCDM(H0=100., Om0=params.par_cosmo['Om']).comoving_distance(z))
+    DA0 = np.array(FlatLambdaCDM(H0=100., Om0=par_cosmo['Om']).comoving_distance(z))
     return DA0
 
 
@@ -1128,116 +1129,116 @@ def DAH(z, Om=0.3, w0=-1., wa=0., Ok=0.):
         DAH (ndarray,len(z)): D_A(z)*H(z)/c
     """
     def Dh(z, Om, Ok, w0, wa): # Hubble distance
-        return params.c/100/abs(Om*(1+z)**3 + Ok*(1+z)**2 + (1-Om-Ok)*(1+z)**(3*(1+w0+wa))*np.exp(-3*wa*z/(1+z)))**0.5
+        return c/100/abs(Om*(1+z)**3 + Ok*(1+z)**2 + (1-Om-Ok)*(1+z)**(3*(1+w0+wa))*np.exp(-3*wa*z/(1+z)))**0.5
 
     def Da(z, Om, Ok, w0, wa): # Comoving angular diameter distance
         Dc = integrate.quad(Dh, 0., z, args=(Om,Ok,w0,wa))[0] # Comoving distance
         if   (Ok==0.): return Dc
-        elif (Ok<0.):  return params.c/100/(-Ok)**0.5*np.sin(100/params.c*(-Ok)**0.5*Dc)
-        elif (Ok>0.):  return params.c/100/Ok**0.5*np.sinh(100/params.c*Ok**0.5*Dc)
+        elif (Ok<0.):  return c/100/(-Ok)**0.5*np.sin(100/c*(-Ok)**0.5*Dc)
+        elif (Ok>0.):  return c/100/Ok**0.5*np.sinh(100/c*Ok**0.5*Dc)
     
     return Da(z, Om, Ok, w0, wa)/Dh(z, Om, Ok, w0, wa)
 
 DAH = np.vectorize(DAH, excluded=(1,2,3,4))
 
 
-def Omz(z, par):
+def Omz(z, par_cosmo):
     """Omega_m(z) in flat LCDM.
 
     Args:
         z (ndarray,len(z)): redshifts
-        par (dict,len(par)): dictionary of cosmological parameter values
+        par_cosmo (dict,len(par)): dictionary of cosmological parameter values
 
     Returns:
         Omz (ndarray,len(z)): Omega_m(z)
     """
-    Omz = par['Om']*(1+z)**3*(DH(z, par)*100/params.c)**2
+    Omz = par_cosmo['Om']*(1+z)**3*(DH(z, par_cosmo)*100/c)**2
     return Omz
 
 
 @np.vectorize
-def Dz(z, par):
+def Dz(z, par_cosmo):
     """Growth factor D(z) in flat LCDM, normalized to 1 at z = 0.
 
     Args:
         z (ndarray,len(z)): redshifts
-        par (dict,len(par)): dictionary of cosmological parameter values
+        par_cosmo (dict,len(par)): dictionary of cosmological parameter values
 
     Returns:
         Dz (ndarray,len(z)): Growth factor D(z)/D(0)
     """
-    def intgrd(a): return (DH(1/a-1., par)/a)**3
-    def D(z): return 5./2.*Omz(z, par)/(1+z)**3/DH(z, par)**3 * integrate.quad(intgrd, 0., 1./(1.+z))[0]
+    def intgrd(a): return (DH(1/a-1., par_cosmo)/a)**3
+    def D(z): return 5./2.*Omz(z, par_cosmo)/(1+z)**3/DH(z, par_cosmo)**3 * integrate.quad(intgrd, 0., 1./(1.+z))[0]
     Dz = D(z)/D(0.)
     return Dz
 
 
-def fz(z, par):
+def fz(z, par_cosmo):
     """Linear growth rate f(z) in flat LCDM.
 
     Args:
         z (ndarray,len(z)): redshifts
-        par (dict,len(par)): dictionary of cosmological parameter values
+        par_cosmo (dict,len(par)): dictionary of cosmological parameter values
 
     Returns:
         fz (ndarray,len(z)): Linear growth rate f(z)
     """
-    fz = Omz(z, par)**0.55
+    fz = Omz(z, par_cosmo)**0.55
     return fz
 
 
-def bz(z, par):
+def bz(z, par_cosmo):
     """Linear bias b(z) of tracers, assuming simple inverse growth factor scaling.
 
     Args:
         z (ndarray,len(z)): redshifts
-        par (dict,len(par)): dictionary of cosmological parameter values
+        par_cosmo (dict,len(par)): dictionary of cosmological parameter values
 
     Returns:
         bz (ndarray,len(z)): linear bias b(z)
     """
-    bz = par['b0']/Dz(z, par)
+    bz = par_cosmo['b0']/Dz(z, par_cosmo)
     return bz
 
 
-def f_b_z(z, par):
+def f_b_z(z, par_cosmo):
     """RSD parameter f(z)/b(z) of tracers.
 
     Args:
         z (ndarray,len(z)): redshifts
-        par (dict,len(par)): dictionary of cosmological parameter values
+        par_cosmo (dict,len(par)): dictionary of cosmological parameter values
 
     Returns:
         fz(z)/bz(z) (ndarray,len(z)): RSD parameter f(z)/b(z)
     """
-    return fz(z, par)/bz(z, par)
+    return fz(z, par_cosmo)/bz(z, par_cosmo)
 
 
-def Hz(z, par):
+def Hz(z, par_cosmo):
     """Hubble rate H(z) in units of km/s/Mpc.
 
     Args:
         z (ndarray,len(z)): redshifts
-        par (dict,len(par)): dictionary of cosmological parameter values
+        par_cosmo (dict,len(par)): dictionary of cosmological parameter values
 
     Returns:
         Hz (ndarray,len(z)): Hubble rate H(z)
     """
-    Hz = params.c*par['h']/DH(z, par)
+    Hz = c*par_cosmo['h']/DH(z, par_cosmo)
     return Hz
 
 
-def rho_c(z, par):
+def rho_c(z, par_cosmo):
     """Critical density rho_c(z) in units of (Msol/h)/(Mpc/h)^3.
 
     Args:
         z (ndarray,len(z)): redshifts
-        par (dict,len(par)): dictionary of cosmological parameter values
+        par_cosmo (dict,len(par)): dictionary of cosmological parameter values
 
     Returns:
         rho_c (ndarray,len(z)): critical density rho_c(z)
     """
-    rho_c = 3*Hz(z, par)**2/(8*np.pi*params.G) * 1e9/par['h']**2*params.KgMsol/params.KmMpc
+    rho_c = 3*Hz(z, par_cosmo)**2/(8*np.pi*G) * 1e9/par_cosmo['h']**2*KgMsol/KmMpc
     return rho_c
 
 
@@ -1262,7 +1263,7 @@ def xi_model(ell, rm, rd, d, D, f=0.5, qper=1., qpar=1., M=1., Q=1.):
     """Model for void-tracer correlation function (either POS vs. LOS or multipoles).
 
     Args:
-        ell (int tuple): multipole orders to calculate, POS vs. LOS 2d correlation if ell = None
+        ell (int list): multipole orders to calculate, POS vs. LOS 2d correlation if ell = None
         rm (ndarray,len(rm)): radial distances from void center to calculate
         rd (ndarray,len(rd)): radial distances from void center for model void density profile
         d (ndarray,len(rd)): model void density profile

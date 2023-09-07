@@ -6,9 +6,8 @@ from scipy import optimize
 import getdist
 from getdist import plots
 from abel.direct import direct_transform as abel
-from voiager import params
+from voiager import *
 from voiager import datalib
-
 
 # Plot parameters
 mpl.use('Agg')
@@ -33,8 +32,6 @@ symbol = ['o','^','v','D','s','p','<','>'] # marker symbols
 color = ['tab:blue','tab:orange','tab:green','tab:red','tab:purple','tab:brown','tab:olive','tab:cyan'] # tableau colors
 #color = ['darkblue','darkred','darkgreen','darkorange','darkviolet','darkcyan','darkseagreen','darkgoldenrod'] # dark colors
 line = ['-','--',':','-.',(5, (10, 3)),(0, (5, 10)),(0, (3, 10, 1, 10)),(0, (3, 5, 1, 5, 1, 5))] # line styles
-name = list(params.par.keys()) # parameter names
-label = list(params.label.values()) # parameter labels
 
 
 def voidSky(Xv, Xvr=None):
@@ -57,7 +54,7 @@ def voidSky(Xv, Xvr=None):
     plt.ylabel(r'Dec', fontsize=14)
     plt.xticks(fontsize=10)
     plt.yticks(fontsize=10)
-    plt.savefig(params.plotPath+'void_sky.jpg', format='jpg', bbox_inches="tight", dpi=800)
+    plt.savefig(plotPath+'void_sky.jpg', format='jpg', bbox_inches="tight", dpi=800)
     plt.clf()
 
 
@@ -82,7 +79,7 @@ def voidBox(xv, zv, azim=65., elev=45.):
     ax.set_zlabel(r'$X_3\,[h^{-1}\mathrm{Mpc}]$', fontsize=14)
     ax.tick_params(labelsize=10)
     ax.view_init(elev, azim)
-    plt.savefig(params.plotPath+'void_box.jpg', format='jpg', bbox_inches="tight", dpi=400)
+    plt.savefig(plotPath+'void_box.jpg', format='jpg', bbox_inches="tight", dpi=400)
     # plt.show()
     plt.clf()
 
@@ -105,7 +102,7 @@ def voidRedshift(rv, zv, rvr=None, zvr=None):
         plt.scatter(rvr, zvr, s=0.2, c='k', alpha=0.1, edgecolors='none', marker='.')
     plt.xlabel(r'$R \; [h^{-1}\mathrm{Mpc}]$', fontsize=fs)
     plt.ylabel(r'$Z$', fontsize=fs)
-    plt.savefig(params.plotPath+'void_redshift.jpg', format='jpg', bbox_inches="tight", dpi=400)
+    plt.savefig(plotPath+'void_redshift.jpg', format='jpg', bbox_inches="tight", dpi=400)
     plt.clf()
 
 
@@ -124,11 +121,11 @@ def voidAbundance(yv, Nbin, ysymb, yunit, ystring, ylim=(1e-10,1e-5), yvr=None):
     Returns:
         n_ystring.pdf (pdf file): void abundance distribution
     """
-    ym, nm, nE = datalib.voidAbundance(yv, Nbin, params.zmin, params.zmax, params.sky, params.Nmock)
+    ym, nm, nE = datalib.voidAbundance(yv, Nbin, zmin, zmax, sky, Nmock)
     plt.plot(ym, nm,color[0], lw=lw)
     plt.errorbar(ym, nm, yerr=nE, color = color[0], fmt = '.', lw=lw, ms=6, mew=mew, elinewidth=lw, capsize=cs)
     if yvr is not None:
-        yrm, nrm, nrE = datalib.voidAbundance(yvr, Nbin, params.zmin, params.zmax, params.sky, params.Nmock)
+        yrm, nrm, nrE = datalib.voidAbundance(yvr, Nbin, zmin, zmax, sky, Nmock)
         plt.plot(yrm, nrm*nm.sum()/nrm.sum(), 'k:', ms=ms, mew=mew, lw=lw)
     plt.figtext(0.65,0.8, r'$N_\mathrm{v}\,=\,$'+str(len(yv)))
     plt.xlabel(r'$'+ysymb+r'\,'+yunit+'$', fontsize=fs)
@@ -136,7 +133,7 @@ def voidAbundance(yv, Nbin, ysymb, yunit, ystring, ylim=(1e-10,1e-5), yvr=None):
     #plt.xlim((yv.min(),yv.max()))
     plt.ylim(ylim)
     plt.yscale('log')
-    plt.savefig(params.plotPath+'n_'+ystring+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+    plt.savefig(plotPath+'n_'+ystring+'.'+figFormat, format=figFormat, bbox_inches="tight")
     plt.clf()
 
 
@@ -157,15 +154,15 @@ def redshiftDistribution(zgm, zvm, ngm, nvm, zv=None, zgrm=None, zvrm=None, ngrm
     plt.plot(zvm, nvm, color[0], ms=ms, mew=mew, lw=2, label=r'Voids')
     if zgrm is not None: plt.plot(zgrm, ngrm*ngm.sum()/ngrm.sum(), 'k:', ms=ms, mew=mew, lw=1.5)
     if zvrm is not None: plt.plot(zvrm, nvrm*nvm.sum()/nvrm.sum(), 'k:', ms=ms, mew=mew, lw=1.5)
-    if params.vbin == 'zv':
-        zbins = datalib.getBins(zv, params.binning, params.Nvbin)
+    if vbin == 'zv':
+        zbins = datalib.getBins(zv, binning, Nvbin)
         for zbin in zbins: plt.axvline(x=zbin, c='k', linestyle='--', lw=1, alpha=0.3)
         #for i in range(len(zbins)-1): plt.text((zbins[i+1]+zbins[i])/2-0.04, 5e-7,'bin '+str(i+1), fontsize=14, alpha=0.3)
     plt.xlabel(r'$z$', fontsize=fs)
     plt.ylabel(r'$n(z) \; [h^3\mathrm{Mpc}^{-3}]$', fontsize=fs)
     plt.yscale('log')
     plt.legend(loc = 'best', prop={'size':16}, fancybox=True, shadow=True)
-    plt.savefig(params.plotPath+'n_redshift.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+    plt.savefig(plotPath+'n_redshift.'+figFormat, format=figFormat, bbox_inches="tight")
     plt.clf()
 
 
@@ -183,7 +180,7 @@ def tracerBias(zg, bg):
     plt.xlabel(r'$z$', fontsize=fs)
     plt.ylabel(r'$b(z)$', fontsize=fs)
     plt.legend(prop={'size':16}, fancybox=True, shadow=True)
-    plt.savefig(params.plotPath+'bias.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+    plt.savefig(plotPath+'bias.'+figFormat, format=figFormat, bbox_inches="tight")
     plt.clf()
 
 
@@ -200,7 +197,7 @@ def xi_p_test(rs, rmi, rvi, xid, p0=[1,-0.8,2.,8.]):
     Returns:
         xi_p_test.pdf (pdf file): projected and deprojected correlation function for best-fit HSW profile
     """
-    for i in range(params.Nvbin):
+    for i in range(Nvbin):
         p1 = optimize.curve_fit(datalib.HSW, rmi[i]/rvi[i], xid[i], p0=p0)
         xit = datalib.HSW(rs, *p1[0])
         xitp = abel(xit, r=rs, direction='forward')
@@ -212,12 +209,12 @@ def xi_p_test(rs, rmi, rvi, xid, p0=[1,-0.8,2.,8.]):
         plt.plot(rs, xitd, label=r'$\xi(r)$', color=color[0], linestyle=line[2], lw=2.5*lw)
         plt.xlabel(r'$s/R$', fontsize=fs)
         plt.ylabel(r'$\xi(s)$', fontsize=fs)
-        plt.xlim(0,params.rmax)
+        plt.xlim(0,rmax)
         plt.ylim(-1,0.4)
         plt.yticks(np.linspace(-1,0.4,8))
         legend = plt.legend(loc = 4, prop={'size':18}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
         legend.get_title().set_fontsize(18)
-        plt.savefig(params.plotPath+'xi_p_test_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+        plt.savefig(plotPath+'xi_p_test_'+str(i+1)+'.'+figFormat, format=figFormat, bbox_inches="tight")
         plt.clf()
 
 
@@ -240,7 +237,7 @@ def xi_p(xip, xipE, xips, xid, xidE, xids, xi, xiE, xits, rmi, rs, rvi, zvi, p1)
     Returns:
         xi_p.pdf (pdf file): projected and deprojected correlation function with its redshift-space monopole (and best fit)
     """
-    for i in range(params.Nvbin):
+    for i in range(Nvbin):
         plt.figure(figsize=figsize)
         plt.plot([1e-4,1e3], [0,0], 'k-', lw=0.5)
         plt.errorbar(rmi[i]/rvi[i], xip[i], label=r'$\xi^s_\mathrm{p}(s_\perp)$', yerr = xipE[i], color=color[2], fmt = 'v', lw=lw, ms=ms, mew=mew, elinewidth=lw, capsize=cs)
@@ -251,14 +248,14 @@ def xi_p(xip, xipE, xips, xid, xidE, xids, xi, xiE, xits, rmi, rs, rvi, zvi, p1)
         plt.plot(rs, xits[i](*p1[i])[0,:], color=color[0], linestyle=line[0], lw=lw)
         plt.xlabel(r'$s/R$', fontsize=fs)
         plt.ylabel(r'$\xi(s)$', fontsize=fs)
-        plt.xlim(0,params.rmax)
+        plt.xlim(0,rmax)
         plt.ylim(-1,0.4)
         plt.yticks(np.linspace(-1,0.4,8))
         plt.figtext(0.6,0.73,r'$\bar{R} = '+'{:>4.1f}'.format(np.round(rvi[i],1))+'h^{-1}\mathrm{Mpc}$')
         plt.figtext(0.6,0.8,r'$\bar{Z} = '+'{:>3.2f}'.format(np.round(zvi[i],2))+'$')
         legend = plt.legend(loc = 4, prop={'size':18}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
         legend.get_title().set_fontsize(18)
-        plt.savefig(params.plotPath+'xi_p_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+        plt.savefig(plotPath+'xi_p_'+str(i+1)+'.'+figFormat, format=figFormat, bbox_inches="tight")
         plt.clf()
 
 
@@ -278,23 +275,23 @@ def xi(xi, xiE, xits, rmi, rs, rvi, zvi, p1, chi2):
     Returns:
         xi_ell.pdf (pdf file): multipoles of correlation function with the best-fit model
     """
-    for i in range(params.Nvbin):
+    for i in range(Nvbin):
         plt.figure(figsize=figsize)
         plt.plot([1e-4,1e3], [0,0], 'k-', lw=0.5)
-        for (l,ll) in enumerate(params.ell):
-            plt.errorbar(rmi[i]/rvi[i], xi[i,l,:], yerr = xiE[i,l,:], label=r'$\ell='+'{:>1n}'.format(params.ell[l])+'$', color=color[l], fmt = symbol[l], lw=lw, ms=ms, mew=mew, elinewidth=lw, capsize=cs)
+        for (l,ll) in enumerate(ell):
+            plt.errorbar(rmi[i]/rvi[i], xi[i,l,:], yerr = xiE[i,l,:], label=r'$\ell='+'{:>1n}'.format(ell[l])+'$', color=color[l], fmt = symbol[l], lw=lw, ms=ms, mew=mew, elinewidth=lw, capsize=cs)
             plt.plot(rs, xits[i](*p1[i])[l,:], color=color[l], linestyle=line[l], lw=lw, ms=ms, mew=mew)
         plt.xlabel(r'$s/R$', fontsize=fs)
         plt.ylabel(r'$\xi^s_\ell(s)$', fontsize=fs)
-        plt.xlim(0,params.rmax)
+        plt.xlim(0,rmax)
         plt.ylim(-1,0.4)
         plt.yticks(np.linspace(-1,0.4,8))
         plt.figtext(0.6,0.73,r'$\bar{R} = '+'{:>4.1f}'.format(np.round(rvi[i],1))+'h^{-1}\mathrm{Mpc}$')
         plt.figtext(0.6,0.8,r'$\bar{Z} = '+'{:>3.2f}'.format(np.round(zvi[i],2))+'$')
-        if (params.datavec == '1d'): plt.figtext(0.68, 0.4, r'$\chi^2_\mathrm{red} \,=\, '+'{:>3.2f}'.format(np.round(chi2[i],2))+'$')
+        if (datavec == '1d'): plt.figtext(0.68, 0.4, r'$\chi^2_\mathrm{red} \,=\, '+'{:>3.2f}'.format(np.round(chi2[i],2))+'$')
         legend = plt.legend(loc = 4, prop={'size':18}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
         legend.get_title().set_fontsize(18)
-        plt.savefig(params.plotPath+'xi_ell_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+        plt.savefig(plotPath+'xi_ell_'+str(i+1)+'.'+figFormat, format=figFormat, bbox_inches="tight")
         plt.clf()
 
 
@@ -313,25 +310,25 @@ def xi_ell(xi, xiE, xits, rmi, rs, rvi, zvi, p1):
     Returns:
         xi_ell=.pdf (pdf file): multipoles of the same order with the best-fit models
     """
-    for l in params.ell:
+    for l in ell:
         plt.figure(figsize=figsize)
         plt.plot([1e-4,1e3], [0,0], 'k-', lw=0.5)
-        for i in range(params.Nvbin):
+        for i in range(Nvbin):
             label = r'${:>4.1f},\;{:>4.2f}'.format(np.round(rvi[i],1),np.round(zvi[i],2))+'$'
             if l==0:
-                plt.errorbar(rmi[i]/rvi[i], xi[i,params.ell.index(l),:], yerr = xiE[i,params.ell.index(l),:], fmt = symbol[i], color = color[i], label=label, ms=ms, mew=mew, elinewidth=lw, capsize=cs)
+                plt.errorbar(rmi[i]/rvi[i], xi[i,ell.index(l),:], yerr = xiE[i,ell.index(l),:], fmt = symbol[i], color = color[i], label=label, ms=ms, mew=mew, elinewidth=lw, capsize=cs)
             else:
-                plt.errorbar(rmi[i]/rvi[i], xi[i,params.ell.index(l),:], yerr = xiE[i,params.ell.index(l),:], fmt = symbol[i], color = color[i], ms=ms, mew=mew, elinewidth=lw, capsize=cs)
-            plt.plot(rs, xits[i](*p1[i])[params.ell.index(l),:], color=color[i], linestyle=line[i], lw=lw, ms=ms, mew=mew)
+                plt.errorbar(rmi[i]/rvi[i], xi[i,ell.index(l),:], yerr = xiE[i,ell.index(l),:], fmt = symbol[i], color = color[i], ms=ms, mew=mew, elinewidth=lw, capsize=cs)
+            plt.plot(rs, xits[i](*p1[i])[ell.index(l),:], color=color[i], linestyle=line[i], lw=lw, ms=ms, mew=mew)
         plt.xlabel(r'$s/R$', fontsize=fs)
         plt.ylabel(r'$\xi^s_{:>1n}'.format(l)+'(s)$', fontsize=fs)
-        plt.xlim(0,params.rmax)
+        plt.xlim(0,rmax)
         if l==0: plt.ylim(-1,0.4)
         else: plt.ylim(-0.2,0.2)
         if l==0:
             legend = plt.legend(loc = 4, title = r'$\bar{R} \, [h^{-1}\mathrm{Mpc}],\; \bar{Z}$ ',prop={'size':18}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
             legend.get_title().set_fontsize(fs)
-        plt.savefig(params.plotPath+'xi_ell='+str(l)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+        plt.savefig(plotPath+'xi_ell='+str(l)+'.'+figFormat, format=figFormat, bbox_inches="tight")
         plt.clf()
 
 
@@ -350,12 +347,12 @@ def xi_2d(xi2d, xi2dts, rmi2d, rvi, zvi, p1, chi2):
     Returns:
         xi_2d.pdf (pdf file): POS vs. LOS 2d correlation function with the best-fit model
     """
-    for i in range(params.Nvbin):
+    for i in range(Nvbin):
         plt.figure(figsize=figsize)
         plt.axes().set_aspect('equal')
-        rpar = np.linspace(-params.rmax,params.rmax,2*10*params.Nspline) # for 2d splines (more nodes required)
+        rpar = np.linspace(-rmax,rmax,2*10*Nspline) # for 2d splines (more nodes required)
         rper = rpar[rpar > 0.]
-        if params.symLOS: # symmetrize along LOS
+        if symLOS: # symmetrize along LOS
             rmi = np.hstack((-rmi2d[i,::-1],rmi2d[i]))
             xi = np.hstack((xi2d[i,:,::-1],xi2d[i]))
             xi = np.vstack((xi[::-1,:],xi))
@@ -372,13 +369,13 @@ def xi_2d(xi2d, xi2dts, rmi2d, rvi, zvi, p1, chi2):
         plt.clabel(model, fontsize=6, fmt='%1.1f')
         plt.xlabel(r'$s_\perp/R$', fontsize=fs)
         plt.ylabel(r'$s_\parallel/R$', fontsize=fs)
-        xymax = np.floor(params.rmax/np.sqrt(2))
+        xymax = np.floor(rmax/np.sqrt(2))
         plt.xlim(np.array([-1,1])*xymax)
         plt.ylim(np.array([-1,1])*xymax)
         plt.xticks(np.arange(-xymax, xymax+1, step=1))
         plt.yticks(np.arange(-xymax, xymax+1, step=1))
-        if (params.datavec == '2d'): plt.figtext(0.55, 0.13, r'$\chi^2_\mathrm{red} \,=\, '+'{:>3.2f}'.format(np.round(chi2[i],2))+'$')
-        plt.savefig(params.plotPath+'xi_2d_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+        if (datavec == '2d'): plt.figtext(0.55, 0.13, r'$\chi^2_\mathrm{red} \,=\, '+'{:>3.2f}'.format(np.round(chi2[i],2))+'$')
+        plt.savefig(plotPath+'xi_2d_'+str(i+1)+'.'+figFormat, format=figFormat, bbox_inches="tight")
         plt.clf()
 
 
@@ -393,7 +390,7 @@ def xi_cov(xiC, dim=1):
         cov_ell.pdf (pdf file): covariance of multipoles (if dim=1) \n
         cov_2d.pdf (pdf file): covariance of POS vs. LOS 2d correlation function (if dim=2)
     """
-    for i in range(params.Nvbin):
+    for i in range(Nvbin):
         plt.figure(figsize=figsize)
         plt.axes().set_aspect('equal')
         coords = np.meshgrid(np.arange(len(xiC[i])),np.arange(len(xiC[i])))[0]/float(len(xiC[i]))
@@ -405,16 +402,16 @@ def xi_cov(xiC, dim=1):
         if dim==1:
             plt.xlabel(r'$\ell$', fontsize=fs)
             plt.ylabel(r'$\ell$', fontsize=fs)
-            plt.xticks(np.linspace(1, max(params.ell)+1, len(params.ell))/len(params.ell)/2, params.ell)
-            plt.yticks(np.linspace(1, max(params.ell)+1, len(params.ell))/len(params.ell)/2, params.ell)
-            plt.savefig(params.plotPath+'cov_ell_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, dpi=300, bbox_inches="tight")
+            plt.xticks(np.linspace(1, max(ell)+1, len(ell))/len(ell)/2, ell)
+            plt.yticks(np.linspace(1, max(ell)+1, len(ell))/len(ell)/2, ell)
+            plt.savefig(plotPath+'cov_ell_'+str(i+1)+'.'+figFormat, format=figFormat, dpi=300, bbox_inches="tight")
         if dim==2:
             plt.xlabel(r'$i$', fontsize=fs)
             plt.ylabel(r'$j$', fontsize=fs)
-            Nbin = np.sqrt(len(xiC[i])) if params.symLOS else np.sqrt(len(xiC[i])/2) # symmetry along LOS
+            Nbin = np.sqrt(len(xiC[i])) if symLOS else np.sqrt(len(xiC[i])/2) # symmetry along LOS
             plt.xticks(np.arange(1,Nbin+1)/(Nbin), np.arange(1,Nbin+1).astype(int), fontsize=8)
             plt.yticks(np.arange(1,Nbin+1)/(Nbin), np.arange(1,Nbin+1).astype(int), fontsize=8)
-            plt.savefig(params.plotPath+'cov_2d_'+str(i+1)+'.'+params.figFormat, format=params.figFormat, dpi=300, bbox_inches="tight")
+            plt.savefig(plotPath+'cov_2d_'+str(i+1)+'.'+figFormat, format=figFormat, dpi=300, bbox_inches="tight")
         plt.clf()
 
 
@@ -430,9 +427,9 @@ def fs8_DAH(zvi, fs8, fs8e, DAH, DAHe, legend):
     Returns:
         fs8_DAH.pdf (pdf file): measurements of f*sigma_8 and D_A*H/c and fiducial cosmological model prediction
     """
-    z = np.linspace(0.,3.,params.Nspline)
-    fs8_fid = datalib.fz(z,params.par_cosmo)*datalib.Dz(z,params.par_cosmo)*params.par_cosmo['s8']
-    DAH_fid = datalib.DA(z,params.par_cosmo)/datalib.DH(z,params.par_cosmo)
+    z = np.linspace(0.,3.,Nspline)
+    fs8_fid = datalib.fz(z,par_cosmo)*datalib.Dz(z,par_cosmo)*par_cosmo['s8']
+    DAH_fid = datalib.DA(z,par_cosmo)/datalib.DH(z,par_cosmo)
     fig, axs = plt.subplots(2, 1, sharex=True, figsize=(8.,4.5))
     fig.subplots_adjust(hspace=0)
     axs[0].tick_params(axis='both', which='major', labelsize=12)
@@ -440,7 +437,7 @@ def fs8_DAH(zvi, fs8, fs8e, DAH, DAHe, legend):
         axs[0].errorbar(zvi+int(i/2+1)*0.005*(-1)**(i+1), fs8[i], yerr = fs8e[i], mfc=color[i], mec='k', ecolor='k', fmt=symbol[i], ms=1.3*ms, mew=2*mew, elinewidth=1, capsize=1.5*cs)
     axs[0].plot(z, fs8_fid, color='k', linestyle=line[2], lw=lw, alpha=0.6)
     axs[0].set_ylabel(r'$f\sigma_8$', fontsize=12)
-    axs[0].set_xlim(params.zvmin,params.zvmax)
+    axs[0].set_xlim(zvmin,zvmax)
     axs[0].set_ylim(0.25,0.6)
     axs[1].tick_params(axis='both', which='major', labelsize=12)
     for i in range(len(DAH)):
@@ -448,11 +445,11 @@ def fs8_DAH(zvi, fs8, fs8e, DAH, DAHe, legend):
     axs[1].plot(z, DAH_fid, color='k', linestyle=line[2], lw=lw, alpha=0.6)
     axs[1].set_xlabel(r'$z$', fontsize=12)
     axs[1].set_ylabel(r'$D_\mathrm{A}H/c$', fontsize=12)
-    axs[1].set_xlim(params.zvmin,params.zvmax)
+    axs[1].set_xlim(zvmin,zvmax)
     axs[1].set_ylim(1.0,1.85)
     legend = axs[1].legend(loc=4, prop={'size':14}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
     legend.get_title().set_fontsize(fs)
-    plt.savefig(params.plotPath+'fs8_DAH.'+params.figFormat, format=params.figFormat, bbox_inches="tight")
+    plt.savefig(plotPath+'fs8_DAH.'+figFormat, format=figFormat, bbox_inches="tight")
     plt.clf()
 
 
@@ -473,9 +470,11 @@ def triangle(samples, p0, p1, rvi, zvi, pLim, pop, legend=None, title=None):
     Returns:
         triangle.pdf (pdf file): triangle plot of posterior parameter distribution
     """
-    for i in range(params.Nvbin):
+    name = list(par.keys()) # parameter names
+    label = [r'f/b', r'q_\perp/q_\parallel', r'q_\parallel', r'\mathcal{M}', r'\mathcal{Q}'] # parameter labels
+    for i in range(Nvbin):
         pops = []
-        for p in pop: pops.append(list(params.par.keys()).index(p))
+        for p in pop: pops.append(list(par.keys()).index(p))
         sample = []
         if len(samples) > 1:
             for s in samples: sample.append(np.delete(s[i],pops,1))
@@ -506,8 +505,8 @@ def triangle(samples, p0, p1, rvi, zvi, pLim, pop, legend=None, title=None):
             title_limit=1)
         fig = gd.fig
         if title is not None: fig.text(0.58, 0.9, title)
-        if params.vbin == 'rv': fig.text(0.6, 0.8, r'$\bar{R} = '+'{:>4.1f}'.format(np.round(rvi[i],1))+'h^{-1}\mathrm{Mpc}$', fontsize=24)
-        if params.vbin == 'zv': fig.text(0.6, 0.8, r'$\bar{Z} = '+'{:>3.2f}'.format(np.round(zvi[i],2))+'$', fontsize=22)
+        if vbin == 'rv': fig.text(0.6, 0.8, r'$\bar{R} = '+'{:>4.1f}'.format(np.round(rvi[i],1))+'h^{-1}\mathrm{Mpc}$', fontsize=24)
+        if vbin == 'zv': fig.text(0.6, 0.8, r'$\bar{Z} = '+'{:>3.2f}'.format(np.round(zvi[i],2))+'$', fontsize=22)
         for k in range(len(pfid)):
             for (j,ax) in enumerate(gd.subplots[:,k]):
                 if ax: ax.axvline(pfid[k], color='gray', ls='--')
@@ -517,7 +516,7 @@ def triangle(samples, p0, p1, rvi, zvi, pLim, pop, legend=None, title=None):
                     ax.set_xlim(plim[k])
                     ax.set_ylim(plim[j])
                 #if (j==k): ax.set_title('$'+pSample[0].getInlineLatex(names[j],limit=1,err_sig_figs=2)+'$',fontsize=10)
-        gd.export(params.plotPath+'triangle_'+str(i+1)+'.'+params.figFormat)
+        gd.export(plotPath+'triangle_'+str(i+1)+'.'+figFormat)
 
 
 def triangle_cosmo(samples, logP, pLim, cosmology, legend):
@@ -534,17 +533,17 @@ def triangle_cosmo(samples, logP, pLim, cosmology, legend):
         triangle_cosmology.pdf (pdf file): triangle plot of posterior cosmological parameter distribution
     """
     if cosmology == 'LCDM':
-        p0 = [params.par_cosmo['Om']]
+        p0 = [par_cosmo['Om']]
         names = ['Om']
         labels = [r'\Omega_\mathrm{m}']
         title = r'Flat $\Lambda\mathrm{CDM}$'
     if cosmology == 'wCDM':
-        p0 = [params.par_cosmo['Om'],params.par_cosmo['w0']]
+        p0 = [par_cosmo['Om'],par_cosmo['w0']]
         names = ['Om','w0']
         labels = [r'\Omega_\mathrm{m}',r'w']
         title = r'Flat $w\mathrm{CDM}$'
     if cosmology == 'w0waCDM':
-        p0 = [params.par_cosmo['Om'],params.par_cosmo['w0'],params.par_cosmo['wa']]
+        p0 = [par_cosmo['Om'],par_cosmo['w0'],par_cosmo['wa']]
         names = ['Om','w0','wa']
         labels = [r'\Omega_\mathrm{m}',r'w_0',r'w_a']
         title = r'Flat $w_0w_a\mathrm{CDM}$'
@@ -575,15 +574,15 @@ def triangle_cosmo(samples, logP, pLim, cosmology, legend):
         for (j,ax) in enumerate(gd.subplots[:,k]):
             if ax:
                 ax.set_xlim(pLim[j])
-                if params.blind == False: ax.axvline(p0[k], color='gray', ls='--')
+                if blind == False: ax.axvline(p0[k], color='gray', ls='--')
             if (j>k):
-                if params.blind == False: ax.axhline(p0[j], color='gray', ls='--')
+                if blind == False: ax.axhline(p0[j], color='gray', ls='--')
                 ax.plot(p1[k], p1[j], 'x', color='w', ms=ms)
                 ax.set_xlim(pLim[k])
                 ax.set_ylim(pLim[j])
             if (j==k): ax.set_title('$'+pSample[0].getInlineLatex(names[j],limit=1,err_sig_figs=2)+'$',fontsize=12)
 
-    gd.export(params.plotPath+'triangle_'+params.cosmology+'.'+params.figFormat)
+    gd.export(plotPath+'triangle_'+cosmology+'.'+figFormat)
 
 
 def logo(xi2dts, p1, vmin=-0.8, vmax=0.4, Nlev=10, cmap='Spectral_r'):
@@ -600,19 +599,19 @@ def logo(xi2dts, p1, vmin=-0.8, vmax=0.4, Nlev=10, cmap='Spectral_r'):
         logo.png (png file): Voiager logo background
     """
     levels = np.linspace(vmin,vmax,Nlev) + 0.03 # contour values
-    for i in range(params.Nvbin):
+    for i in range(Nvbin):
         plt.figure(figsize=figsize)
         plt.axes().set_aspect('equal')
-        rpar = np.linspace(-params.rmax,params.rmax,2*10*params.Nspline) # for 2d splines (more nodes required)
+        rpar = np.linspace(-rmax,rmax,2*10*Nspline) # for 2d splines (more nodes required)
         rper = rpar[rpar > 0.]
         plt.pcolormesh(rper, rpar, xi2dts[i](*p1[i]).T, cmap=plt.get_cmap(cmap), vmin=vmin, vmax=vmax, shading='auto')
         plt.pcolormesh(-rper, rpar[::-1], xi2dts[i](*p1[i]).T, cmap=plt.get_cmap(cmap), vmin=vmin, vmax=vmax, shading='auto')
         plt.contour(rper, rpar, xi2dts[i](*p1[i]).T, levels, vmin=vmin, vmax=vmax, colors='k', linewidths=0.5, alpha=0.5)
         plt.contour(-rper, rpar[::-1], xi2dts[i](*p1[i]).T, levels, vmin=vmin, vmax=vmax, colors='k', linewidths=0.5, alpha=0.5)
-        xymax = np.floor(params.rmax/np.sqrt(2))
+        xymax = np.floor(rmax/np.sqrt(2))
         plt.xlim(np.array([-1,1])*xymax)
         plt.ylim(np.array([-1,1])*xymax)
         plt.xticks([])
         plt.yticks([])
-        plt.savefig(params.plotPath+'logo_'+str(i+1)+'.png', format='png', bbox_inches="tight", dpi=800)
+        plt.savefig(plotPath+'logo_'+str(i+1)+'.png', format='png', bbox_inches="tight", dpi=800)
         plt.clf()

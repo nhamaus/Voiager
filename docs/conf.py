@@ -27,6 +27,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
+#    'sphinxarg.ext',
 #    'sphinx_automodapi.automodapi',
     ]
 
