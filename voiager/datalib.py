@@ -329,10 +329,10 @@ def getStack(xv, xg, rv, zv, Nv, Ng, ngz, zgm, wg=None, rmax=3, Nbin=20, ell=[0,
         Ncpu (int): number of CPUs for parallel calculation (default = 1 for serial)
 
     Returns:
-        Void density profile, normalized by mean tracer density: \n
-        n (ndarray,[len(xv),Nrbin]) if dim=0: projected along line-of-sight \n
-        n (ndarray,[len(xv),len(ell),Nrbin]) if dim=1: multipoles \n
-        n (ndarray,[len(xv),Nrbin,Nrbin]) if dim=2: POS vs. LOS
+        Void density profile, normalized by mean tracer density \n
+        n (ndarray,[len(xv),Nrbin]) if dim=0, projected along line-of-sight \n
+        n (ndarray,[len(xv),len(ell),Nrbin]) if dim=1, multipoles \n
+        n (ndarray,[len(xv),Nrbin,Nrbin]) if dim=2, POS vs. LOS
     """
     # Shift each mock to guarantee correspondence of tracers (not needed for randoms)
     if (Nmock>1):
@@ -388,10 +388,10 @@ def profile1(xv, xg, xvs, xgs, xgTree, rv, ngz, wg=None, rmax=3, Nbin=20, ell=[0
         idv (int): void id (default = 0)
 
     Returns:
-        Void density profile, normalized by mean tracer density: \n
-        n/ngz (ndarray,Nrbin) if dim==0: projected along line-of-sight \n
-        n/ngz (ndarray,[len(ell),Nrbin]) if dim==1: multipoles \n
-        n/ngz (ndarray,[Nrbin,Nrbin]) if dim==2: POS vs. LOS
+        Void density profile, normalized by mean tracer density \n
+        n/ngz (ndarray,Nrbin) if dim==0, projected along line-of-sight \n
+        n/ngz (ndarray,[len(ell),Nrbin]) if dim==1, multipoles \n
+        n/ngz (ndarray,[Nrbin,Nrbin]) if dim==2, POS vs. LOS
     """
     # Select void id
     xv   = xv[idv,:]
