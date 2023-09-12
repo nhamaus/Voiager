@@ -42,25 +42,19 @@ External package requirements are provided in the file [requirements.txt](requir
 
 ## Usage
 
-The simplest way to get started is to execute the script [launch.py](voiager/launch.py) from within the [Voiager/](./) package directory with python (version 3) in interactive mode:
+The simplest way to get started is to run the executable `voiager` from a terminal within the [Voiager/](./) package directory. This launches *Voiager* following [launch.py](voiager/launch.py) with python (version 3). For further help on its usage, type:
 ```sh
-python -i voiager/launch.py
+voiager --help
 ```
-It is set up to perform an example run from the [Beyond-2pt](https://github.com/ANSalcedo/Beyond2ptMock) blind data challenge, based on a simulated light-cone in a *w*CDM cosmology ([C_mock_lightcone.h5](https://github.com/ANSalcedo/Beyond2ptMock/blob/main/C_mock_lightcone.h5)). The input data is retrieved from the [catalogs/](catalogs/) folder including void catalogs produced with [VIDE](https://bitbucket.org/cosmicvoids/vide_public/wiki/Home/), while the output of the code is stored in the [results/](results/) directory.
+*Voiager* is set up to perform an example run from the [Beyond-2pt](https://github.com/ANSalcedo/Beyond2ptMock) blind data challenge, based on a simulated light-cone in a *w*CDM cosmology ([C_mock_lightcone.h5](https://github.com/ANSalcedo/Beyond2ptMock/blob/main/C_mock_lightcone.h5)). The input data is retrieved from the [catalogs/](catalogs/) folder including void catalogs produced with [VIDE](https://bitbucket.org/cosmicvoids/vide_public/wiki/Home/), while the output of the code is stored in the [results/](results/) directory.
 
 
-*Note*: The example data in [catalogs/](catalogs/) and the example results in [results/](results/) are not automatically downloaded upon installation, but they can be accessed via the repository. The [catalogs/](catalogs/) folder can be downloaded as a compressed archive [catalogs.tar.gz](https://github.com/nhamaus/Voiager/releases/download/v0.1.0/catalogs.tar.gz) and unpacked via
+The example data in [catalogs/](catalogs/) and the example results in [results/](results/) are not automatically downloaded upon installation, but they can be accessed via the repository. The [catalogs/](catalogs/) folder can be downloaded as a compressed archive [catalogs.tar.gz](https://github.com/nhamaus/Voiager/releases/download/v0.1.0/catalogs.tar.gz) and unpacked via
 ```sh
 tar -xvzf catalogs.tar.gz
 ```
 
-You can also execute the code via the installed package from the [Voiager/](./) directory, either via
-```sh
-python -m voiager
-```
-or by calling the executable `voiager` from the terminal.
-
-*Note*: All the parameters of *Voiager* are configured in the file [params.yaml](voiager/params.yaml), which is used as default configuration. You can also point to your customized parameter file in [yaml](https://pyyaml.org/) format like this:
+All the parameters of *Voiager* are configured in the file [params.yaml](voiager/params.yaml), which is used as default configuration. You can also point to your customized parameter file in [yaml](https://pyyaml.org/) format like this:
 ```sh
 voiager 'path/to/parameter_file.yaml'
 ```

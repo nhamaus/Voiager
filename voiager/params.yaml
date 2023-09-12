@@ -11,10 +11,10 @@ Info: # Survey information
 IO: # Input / output
   runExec:        True # If True, run executable when called
   basePath:       '' # Location of the top level code directory relative to current working directory
-  tracerPath:     '/catalogs/tracers/' # Location of tracer catalogs relative to basePath
-  voidPath:       '/catalogs/voids/' # Location of void catalogs relative to basePath
-  outPath:        '/results/' # Location to store output files relative to basePath
-  plotPath:       '/plots/' # Location to store plots relative to outPath
+  tracerPath:     'catalogs/tracers/' # Location of tracer catalogs relative to basePath
+  voidPath:       'catalogs/voids/' # Location of void catalogs relative to basePath
+  outPath:        'results/' # Location to store output files relative to basePath
+  plotPath:       'plots/' # Location to store plots relative to outPath
   inputFormat:    'hdf5' # Filetype for input tracer and random catalogs (supported types: https://docs.astropy.org/en/stable/io/unified.html)
   inputExtension: 'h5' # Filename extension for input tracer and random catalogs
   figFormat:      'pdf' # Format to save figures (e.g., pdf, png, jpg)
@@ -60,6 +60,7 @@ Computing: # Computing parameters
   Nchain:  1000 # Length of each MCMC chain
   Nburn:   3.0 # Initial burn-in steps of chain to discard, in units of auto-correlation time
   Nthin:   0.5 # Thinning factor of chain, in units of auto-correlation time
+  Nmarg:   4.0 # Margin size for parameter limits in plots, in units of standard deviation
 
 
 Model: # Model parameters with fiducial values and priors

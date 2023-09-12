@@ -2,11 +2,11 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from pathlib import Path
 from scipy import optimize
 import getdist
 from getdist import plots
 from abel.direct import direct_transform as abel
-from voiager import *
 from voiager import datalib
 
 # Plot parameters
@@ -34,12 +34,13 @@ color = ['tab:blue','tab:orange','tab:green','tab:red','tab:purple','tab:brown',
 line = ['-','--',':','-.',(5, (10, 3)),(0, (5, 10)),(0, (3, 10, 1, 10)),(0, (3, 5, 1, 5, 1, 5))] # line styles
 
 
-def voidSky(Xv, Xvr=None):
+def voidSky(Xv, Xvr=None, plotPath='plots/'):
     """Plot angular distribution of void centers on the sky.
 
     Args:
         Xv (ndarray,[len(Xv),3]): RA, Dec, redshift of void centers
         Xvr (ndarray,[len(Xvr),3]): RA, Dec, redshift of void center randoms (default = None)
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         void_sky.jpg (image file): Mollweide projection of void distribution on the sky, color-coded by redshift
@@ -54,11 +55,11 @@ def voidSky(Xv, Xvr=None):
     plt.ylabel(r'Dec', fontsize=14)
     plt.xticks(fontsize=10)
     plt.yticks(fontsize=10)
-    plt.savefig(plotPath+'void_sky.jpg', format='jpg', bbox_inches="tight", dpi=800)
+    plt.savefig(Path(plotPath) / 'void_sky.jpg', format='jpg', bbox_inches="tight", dpi=800)
     plt.clf()
 
 
-def voidBox(xv, zv, azim=65., elev=45.):
+def voidBox(xv, zv, azim=65., elev=45., plotPath='plots/'):
     """Plot 3d distribution of void centers in a comoving box.
 
     Args:
@@ -66,6 +67,7 @@ def voidBox(xv, zv, azim=65., elev=45.):
         zv (ndarray,len(zv)): void redshifts
         azim (float): azimuthal viewing angle in degrees (default = 65)
         elev (float): elevation viewing angle in degrees (default = 45)
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         void_box.jpg (image file): 3d view of void centers in a box, color-coded by redshift
@@ -79,12 +81,12 @@ def voidBox(xv, zv, azim=65., elev=45.):
     ax.set_zlabel(r'$X_3\,[h^{-1}\mathrm{Mpc}]$', fontsize=14)
     ax.tick_params(labelsize=10)
     ax.view_init(elev, azim)
-    plt.savefig(plotPath+'void_box.jpg', format='jpg', bbox_inches="tight", dpi=400)
+    plt.savefig(Path(plotPath) / 'void_box.jpg', format='jpg', bbox_inches="tight", dpi=400)
     # plt.show()
     plt.clf()
 
 
-def voidRedshift(rv, zv, rvr=None, zvr=None):
+def voidRedshift(rv, zv, rvr=None, zvr=None, plotPath='plots/'):
     """Plot redshift distribution for voids of different effective radius.
 
     Args:
@@ -92,6 +94,7 @@ def voidRedshift(rv, zv, rvr=None, zvr=None):
         zv (ndarray,len(zv)): void redshifts
         rvr (ndarray,len(rvr)): effective void radii randoms (default = None)
         zvr (ndarray,len(zvr)): void redshift randoms (default = None)
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         void_redshift.jpg (image file): void distribution across effective radius and redshift (color-coded)
@@ -102,30 +105,37 @@ def voidRedshift(rv, zv, rvr=None, zvr=None):
         plt.scatter(rvr, zvr, s=0.2, c='k', alpha=0.1, edgecolors='none', marker='.')
     plt.xlabel(r'$R \; [h^{-1}\mathrm{Mpc}]$', fontsize=fs)
     plt.ylabel(r'$Z$', fontsize=fs)
-    plt.savefig(plotPath+'void_redshift.jpg', format='jpg', bbox_inches="tight", dpi=400)
+    plt.savefig(Path(plotPath) / 'void_redshift.jpg', format='jpg', bbox_inches="tight", dpi=400)
     plt.clf()
 
 
-def voidAbundance(yv, Nbin, ysymb, yunit, ystring, ylim=(1e-10,1e-5), yvr=None):
+def voidAbundance(yv, Nbin, zmin, zmax, sky, par_cosmo, ysymb, yunit, ystring, ylim=[1e-10,1e-5], yvr=None, Nmock=1, figFormat='pdf', plotPath='plots/'):
     """Plot void abundance as a function of void properties.
 
     Args:
         yv (ndarray,len(yv)): arbitrary void property (e.g., effective radius, redshift, core density, ellipticity)
         Nbin (int): number of bins
+        zmin (float): minimum redshift
+        zmax (float): maximum redshift
+        sky (float): sky area in square degrees
+        par_cosmo (dict): cosmological parameter values
         ysymb (str): mathematical symbol of void property
         yunit (str): unit of void property
         ystring (str): name of void property (abbreviation)
         ylim (tuple,2): lower and upper y-axis limit (default = 1e-10,1e-5)
         yvr (ndarray,len(yv)): void property random (default = None)
+        Nmock (int): number of mock catalogs (default = 1)
+        figFormat (str): format to save figure (default 'pdf')
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         n_ystring.pdf (pdf file): void abundance distribution
     """
-    ym, nm, nE = datalib.voidAbundance(yv, Nbin, zmin, zmax, sky, Nmock)
+    ym, nm, nE = datalib.voidAbundance(yv, Nbin, zmin, zmax, sky, par_cosmo, Nmock)
     plt.plot(ym, nm,color[0], lw=lw)
     plt.errorbar(ym, nm, yerr=nE, color = color[0], fmt = '.', lw=lw, ms=6, mew=mew, elinewidth=lw, capsize=cs)
     if yvr is not None:
-        yrm, nrm, nrE = datalib.voidAbundance(yvr, Nbin, zmin, zmax, sky, Nmock)
+        yrm, nrm, nrE = datalib.voidAbundance(yvr, Nbin, zmin, zmax, sky, par_cosmo, Nmock)
         plt.plot(yrm, nrm*nm.sum()/nrm.sum(), 'k:', ms=ms, mew=mew, lw=lw)
     plt.figtext(0.65,0.8, r'$N_\mathrm{v}\,=\,$'+str(len(yv)))
     plt.xlabel(r'$'+ysymb+r'\,'+yunit+'$', fontsize=fs)
@@ -133,11 +143,11 @@ def voidAbundance(yv, Nbin, ysymb, yunit, ystring, ylim=(1e-10,1e-5), yvr=None):
     #plt.xlim((yv.min(),yv.max()))
     plt.ylim(ylim)
     plt.yscale('log')
-    plt.savefig(plotPath+'n_'+ystring+'.'+figFormat, format=figFormat, bbox_inches="tight")
+    plt.savefig(Path(plotPath) / ('n_'+ystring+'.'+figFormat), format=figFormat, bbox_inches="tight")
     plt.clf()
 
 
-def redshiftDistribution(zgm, zvm, ngm, nvm, zv=None, zgrm=None, zvrm=None, ngrm=None, nvrm=None):
+def redshiftDistribution(zgm, zvm, ngm, nvm, zv=None, zgrm=None, zvrm=None, ngrm=None, nvrm=None, vbin='zv', binning='eqn', Nvbin=2, figFormat='pdf', plotPath='plots/'):
     """Plot redshift distribution of tracers (galaxies) and voids.
 
     Args:
@@ -146,6 +156,11 @@ def redshiftDistribution(zgm, zvm, ngm, nvm, zv=None, zgrm=None, zvrm=None, ngrm
         zv (ndarray,len(zv)): void redshifts (default = None)
         zgrm, zvrm (ndarray,Nbin_nz): mean redshift of randoms per bin (default = None)
         ngrm, nvrm (ndarray,Nbin_nz): mean number density of randoms per bin (default = None)
+        vbin (str): binning strategy, 'zv': void-redshift bins (default), 'rv': void-radius bins
+        binning (str / list): 'eqn' for equal number of voids (default), 'lin' for linear, 'log' for logarithmic. Alternatively, provide a list for custom bin edges.
+        Nvbin (int): number of void bins (default = 2)
+        figFormat (str): format to save figure (default 'pdf')
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         n_zv.pdf (pdf file): redshift distribution of tracers and voids (redshift bins indicated if used)
@@ -162,16 +177,18 @@ def redshiftDistribution(zgm, zvm, ngm, nvm, zv=None, zgrm=None, zvrm=None, ngrm
     plt.ylabel(r'$n(z) \; [h^3\mathrm{Mpc}^{-3}]$', fontsize=fs)
     plt.yscale('log')
     plt.legend(loc = 'best', prop={'size':16}, fancybox=True, shadow=True)
-    plt.savefig(plotPath+'n_redshift.'+figFormat, format=figFormat, bbox_inches="tight")
+    plt.savefig(Path(plotPath) / ('n_redshift.'+figFormat), format=figFormat, bbox_inches="tight")
     plt.clf()
 
 
-def tracerBias(zg, bg):
+def tracerBias(zg, bg, figFormat='pdf', plotPath='plots/'):
     """Plot tracer (galaxy) bias as function of redshift.
 
     Args:
         zg (ndarray,len(zg)): tracer redshifts
         bg (ndarray,len(zg)): tracer bias
+        figFormat (str): format to save figure (default 'pdf')
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         bias.pdf (pdf file): tracer bias as function of redshift
@@ -180,11 +197,11 @@ def tracerBias(zg, bg):
     plt.xlabel(r'$z$', fontsize=fs)
     plt.ylabel(r'$b(z)$', fontsize=fs)
     plt.legend(prop={'size':16}, fancybox=True, shadow=True)
-    plt.savefig(plotPath+'bias.'+figFormat, format=figFormat, bbox_inches="tight")
+    plt.savefig(Path(plotPath) / ('bias.'+figFormat), format=figFormat, bbox_inches="tight")
     plt.clf()
 
 
-def xi_p_test(rs, rmi, rvi, xid, p0=[1,-0.8,2.,8.]):
+def xi_p_test(rs, rmi, rvi, xid, p0=[1,-0.8,2.,8.], Nvbin=2, rmax=3, figFormat='pdf', plotPath='plots/'):
     """Plot projected and deprojected correlation function for best-fit HSW profile as a test template.
 
     Args:
@@ -193,6 +210,10 @@ def xi_p_test(rs, rmi, rvi, xid, p0=[1,-0.8,2.,8.]):
         rvi (ndarray,Nvbin): average effective void radius per bin
         xid, xidE (ndarray,[Nvbin,Nrbin]): deprojected void-tracer correlation function
         p0 (ndarray,Npar): initial parameter values for HSW profile (default r_s=1, d_c=-0.8, a=2, b=8)
+        Nvbin (int): number of void bins (default = 2)
+        rmax (float): maximum distance from void center in units of effective void radius (default = 3)
+        figFormat (str): format to save figure (default 'pdf')
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         xi_p_test.pdf (pdf file): projected and deprojected correlation function for best-fit HSW profile
@@ -214,11 +235,11 @@ def xi_p_test(rs, rmi, rvi, xid, p0=[1,-0.8,2.,8.]):
         plt.yticks(np.linspace(-1,0.4,8))
         legend = plt.legend(loc = 4, prop={'size':18}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
         legend.get_title().set_fontsize(18)
-        plt.savefig(plotPath+'xi_p_test_'+str(i+1)+'.'+figFormat, format=figFormat, bbox_inches="tight")
+        plt.savefig(Path(plotPath) / ('xi_p_test_'+str(i+1)+'.'+figFormat), format=figFormat, bbox_inches="tight")
         plt.clf()
 
 
-def xi_p(xip, xipE, xips, xid, xidE, xids, xi, xiE, xits, rmi, rs, rvi, zvi, p1):
+def xi_p(xip, xipE, xips, xid, xidE, xids, xi, xiE, xits, rmi, rs, rvi, zvi, p1, Nvbin=2, rmax=3, figFormat='pdf', plotPath='plots/'):
     """Plot projected and deprojected correlation function with its redshift-space monopole.
 
     Args:
@@ -233,6 +254,10 @@ def xi_p(xip, xipE, xips, xid, xidE, xids, xi, xiE, xits, rmi, rs, rvi, zvi, p1)
         rvi (ndarray,Nvbin): average effective void radius per bin
         zvi (ndarray,Nvbin): average void redshift per bin
         p1 (ndarray,[Nvbin,Npar]): best-fit model parameter values
+        Nvbin (int): number of void bins (default = 2)
+        rmax (float): maximum distance from void center in units of effective void radius (default = 3)
+        figFormat (str): format to save figure (default 'pdf')
+        plotPath (path): name of output path for plot (default = '/plots/')
 
     Returns:
         xi_p.pdf (pdf file): projected and deprojected correlation function with its redshift-space monopole (and best fit)
@@ -255,11 +280,11 @@ def xi_p(xip, xipE, xips, xid, xidE, xids, xi, xiE, xits, rmi, rs, rvi, zvi, p1)
         plt.figtext(0.6,0.8,r'$\bar{Z} = '+'{:>3.2f}'.format(np.round(zvi[i],2))+'$')
         legend = plt.legend(loc = 4, prop={'size':18}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
         legend.get_title().set_fontsize(18)
-        plt.savefig(plotPath+'xi_p_'+str(i+1)+'.'+figFormat, format=figFormat, bbox_inches="tight")
+        plt.savefig(Path(plotPath) / ('xi_p_'+str(i+1)+'.'+figFormat), format=figFormat, bbox_inches="tight")
         plt.clf()
 
 
-def xi(xi, xiE, xits, rmi, rs, rvi, zvi, p1, chi2):
+def xi(xi, xiE, xits, rmi, rs, rvi, zvi, p1, chi2, Nvbin=2, rmax=3, ell=[0,], datavec='2d', figFormat='pdf', plotPath='plots/'):
     """Plot multipoles of correlation function with the best-fit model.
 
     Args:
@@ -271,6 +296,12 @@ def xi(xi, xiE, xits, rmi, rs, rvi, zvi, p1, chi2):
         zvi (ndarray,Nvbin): average void redshift per bin
         p1 (ndarray,[Nvbin,Npar]): best-fit model parameter values
         chi2 (ndarray,Nvbin): reduced chi-squared values of best fit
+        Nvbin (int): number of void bins (default = 2)
+        rmax (float): maximum distance from void center in units of effective void radius (default = 3)
+        ell (int list): multipole orders to calculate (default = [0,])
+        datavec (str): Define data vector, '1d': multipoles, '2d': POS vs. LOS 2d correlation function (default)
+        figFormat (str): format to save figure (default 'pdf')
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         xi_ell.pdf (pdf file): multipoles of correlation function with the best-fit model
@@ -291,11 +322,11 @@ def xi(xi, xiE, xits, rmi, rs, rvi, zvi, p1, chi2):
         if (datavec == '1d'): plt.figtext(0.68, 0.4, r'$\chi^2_\mathrm{red} \,=\, '+'{:>3.2f}'.format(np.round(chi2[i],2))+'$')
         legend = plt.legend(loc = 4, prop={'size':18}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
         legend.get_title().set_fontsize(18)
-        plt.savefig(plotPath+'xi_ell_'+str(i+1)+'.'+figFormat, format=figFormat, bbox_inches="tight")
+        plt.savefig(Path(plotPath) / ('xi_ell_'+str(i+1)+'.'+figFormat), format=figFormat, bbox_inches="tight")
         plt.clf()
 
 
-def xi_ell(xi, xiE, xits, rmi, rs, rvi, zvi, p1):
+def xi_ell(xi, xiE, xits, rmi, rs, rvi, zvi, p1, Nvbin=2, rmax=3, ell=[0,], figFormat='pdf', plotPath='plots/'):
     """Plot multipoles of the same order for all void bins with the best-fit models.
 
     Args:
@@ -306,6 +337,11 @@ def xi_ell(xi, xiE, xits, rmi, rs, rvi, zvi, p1):
         rvi (ndarray,Nvbin): average effective void radius per bin
         zvi (ndarray,Nvbin): average void redshift per bin
         p1 (ndarray,[Nvbin,Npar]): best-fit model parameter values
+        Nvbin (int): number of void bins (default = 2)
+        rmax (float): maximum distance from void center in units of effective void radius (default = 3)
+        ell (int list): multipole orders to calculate (default = [0,])
+        figFormat (str): format to save figure (default 'pdf')
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         xi_ell=.pdf (pdf file): multipoles of the same order with the best-fit models
@@ -328,11 +364,11 @@ def xi_ell(xi, xiE, xits, rmi, rs, rvi, zvi, p1):
         if l==0:
             legend = plt.legend(loc = 4, title = r'$\bar{R} \, [h^{-1}\mathrm{Mpc}],\; \bar{Z}$ ',prop={'size':18}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
             legend.get_title().set_fontsize(fs)
-        plt.savefig(plotPath+'xi_ell='+str(l)+'.'+figFormat, format=figFormat, bbox_inches="tight")
+        plt.savefig(Path(plotPath) / ('xi_ell='+str(l)+'.'+figFormat), format=figFormat, bbox_inches="tight")
         plt.clf()
 
 
-def xi_2d(xi2d, xi2dts, rmi2d, rvi, zvi, p1, chi2):
+def xi_2d(xi2d, xi2dts, rmi2d, rvi, zvi, p1, chi2, Nvbin=2, Nspline=200, rmax=3, datavec='2d', symLOS=True, figFormat='pdf', plotPath='plots/'):
     """Plot POS vs. LOS 2d correlation function with the best-fit model.
 
     Args:
@@ -343,6 +379,13 @@ def xi_2d(xi2d, xi2dts, rmi2d, rvi, zvi, p1, chi2):
         zvi (ndarray,Nvbin): average void redshift per bin
         p1 (ndarray,[Nvbin,Npar]): best-fit model parameter values
         chi2 (ndarray,Nvbin): reduced chi-squared values of best fit
+        Nvbin (int): number of void bins (default = 2)
+        Nspline (int): number of nodes for spline if Nsmooth > 0 (default = 200)
+        rmax (float): maximum distance from void center in units of effective void radius (default = 3)
+        datavec (str): Define data vector, '1d': multipoles, '2d': POS vs. LOS 2d correlation function (default)
+        symLOS (bool): if True, assume symmetry along LOS (default)
+        figFormat (str): format to save figure (default 'pdf')
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         xi_2d.pdf (pdf file): POS vs. LOS 2d correlation function with the best-fit model
@@ -375,16 +418,21 @@ def xi_2d(xi2d, xi2dts, rmi2d, rvi, zvi, p1, chi2):
         plt.xticks(np.arange(-xymax, xymax+1, step=1))
         plt.yticks(np.arange(-xymax, xymax+1, step=1))
         if (datavec == '2d'): plt.figtext(0.55, 0.13, r'$\chi^2_\mathrm{red} \,=\, '+'{:>3.2f}'.format(np.round(chi2[i],2))+'$')
-        plt.savefig(plotPath+'xi_2d_'+str(i+1)+'.'+figFormat, format=figFormat, bbox_inches="tight")
+        plt.savefig(Path(plotPath) / ('xi_2d_'+str(i+1)+'.'+figFormat), format=figFormat, bbox_inches="tight")
         plt.clf()
 
 
-def xi_cov(xiC, dim=1):
+def xi_cov(xiC, dim=1, Nvbin=2, ell=[0,], symLOS=True, figFormat='pdf', plotPath='plots/'):
     """Plot normalized covariance matrix of correlation function.
 
     Args:
         xiC (ndarray,[Nvbin,*,*]): covariance of (either 1d or 2d) correlation function
         dim (int): dimension of data vector [1: multipoles (default), 2: POS vs. LOS]
+        Nvbin (int): number of void bins (default = 2)
+        ell (int list): multipole orders to calculate (default = [0,])
+        symLOS (bool): if True, assume symmetry along LOS (default)
+        figFormat (str): format to save figure (default 'pdf')
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         cov_ell.pdf (pdf file): covariance of multipoles (if dim=1) \n
@@ -404,25 +452,31 @@ def xi_cov(xiC, dim=1):
             plt.ylabel(r'$\ell$', fontsize=fs)
             plt.xticks(np.linspace(1, max(ell)+1, len(ell))/len(ell)/2, ell)
             plt.yticks(np.linspace(1, max(ell)+1, len(ell))/len(ell)/2, ell)
-            plt.savefig(plotPath+'cov_ell_'+str(i+1)+'.'+figFormat, format=figFormat, dpi=300, bbox_inches="tight")
+            plt.savefig(Path(plotPath) / ('cov_ell_'+str(i+1)+'.'+figFormat), format=figFormat, dpi=300, bbox_inches="tight")
         if dim==2:
             plt.xlabel(r'$i$', fontsize=fs)
             plt.ylabel(r'$j$', fontsize=fs)
             Nbin = np.sqrt(len(xiC[i])) if symLOS else np.sqrt(len(xiC[i])/2) # symmetry along LOS
             plt.xticks(np.arange(1,Nbin+1)/(Nbin), np.arange(1,Nbin+1).astype(int), fontsize=8)
             plt.yticks(np.arange(1,Nbin+1)/(Nbin), np.arange(1,Nbin+1).astype(int), fontsize=8)
-            plt.savefig(plotPath+'cov_2d_'+str(i+1)+'.'+figFormat, format=figFormat, dpi=300, bbox_inches="tight")
+            plt.savefig(Path(plotPath) / ('cov_2d_'+str(i+1)+'.'+figFormat), format=figFormat, dpi=300, bbox_inches="tight")
         plt.clf()
 
 
-def fs8_DAH(zvi, fs8, fs8e, DAH, DAHe, legend):
+def fs8_DAH(zvi, zmin, zmax, fs8, fs8e, DAH, DAHe, legend, par_cosmo, Nspline=200, figFormat='pdf', plotPath='plots/'):
     """Plot measurements of f*sigma_8 and D_A*H/c against redshift.
 
     Args:
         zvi (ndarray,Nvbin): average void redshift per bin
+        zmin (float): minimum redshift
+        zmax (float): maximum redshift
         fs8, fs8e (ndarray list,[len(fs8),Nvbin]): measured values and uncertainties of f*sigma_8
         DAH, DAHe (ndarray list,[len(DAH),Nvbin]): measured values and uncertainties of D_A*H/c
         legend (str list): legend labels for different measurements
+        par_cosmo (dict): cosmological parameter values
+        Nspline (int): number of nodes for spline if Nsmooth > 0 (default = 200)
+        figFormat (str): format to save figure (default 'pdf')
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         fs8_DAH.pdf (pdf file): measurements of f*sigma_8 and D_A*H/c and fiducial cosmological model prediction
@@ -437,7 +491,7 @@ def fs8_DAH(zvi, fs8, fs8e, DAH, DAHe, legend):
         axs[0].errorbar(zvi+int(i/2+1)*0.005*(-1)**(i+1), fs8[i], yerr = fs8e[i], mfc=color[i], mec='k', ecolor='k', fmt=symbol[i], ms=1.3*ms, mew=2*mew, elinewidth=1, capsize=1.5*cs)
     axs[0].plot(z, fs8_fid, color='k', linestyle=line[2], lw=lw, alpha=0.6)
     axs[0].set_ylabel(r'$f\sigma_8$', fontsize=12)
-    axs[0].set_xlim(zvmin,zvmax)
+    axs[0].set_xlim(zmin,zmax)
     axs[0].set_ylim(0.25,0.6)
     axs[1].tick_params(axis='both', which='major', labelsize=12)
     for i in range(len(DAH)):
@@ -445,15 +499,15 @@ def fs8_DAH(zvi, fs8, fs8e, DAH, DAHe, legend):
     axs[1].plot(z, DAH_fid, color='k', linestyle=line[2], lw=lw, alpha=0.6)
     axs[1].set_xlabel(r'$z$', fontsize=12)
     axs[1].set_ylabel(r'$D_\mathrm{A}H/c$', fontsize=12)
-    axs[1].set_xlim(zvmin,zvmax)
+    axs[1].set_xlim(zmin,zmax)
     axs[1].set_ylim(1.0,1.85)
     legend = axs[1].legend(loc=4, prop={'size':14}, numpoints=1, markerscale=1.5, fancybox=True, shadow=True)
     legend.get_title().set_fontsize(fs)
-    plt.savefig(plotPath+'fs8_DAH.'+figFormat, format=figFormat, bbox_inches="tight")
+    plt.savefig(Path(plotPath) / ('fs8_DAH.'+figFormat), format=figFormat, bbox_inches="tight")
     plt.clf()
 
 
-def triangle(samples, p0, p1, rvi, zvi, pLim, pop, legend=None, title=None):
+def triangle(samples, p0, p1, rvi, zvi, pLim, pop, par, Nvbin=2, vbin='zv', legend=None, title=None, figFormat='pdf', plotPath='plots/'):
     """Make triangle plot of MCMC posterior.
 
     Args:
@@ -464,8 +518,13 @@ def triangle(samples, p0, p1, rvi, zvi, pLim, pop, legend=None, title=None):
         zvi (ndarray,Nvbin): average void redshift per bin
         pLim (ndarray list,[len(samples),Nvbin,Npar,2]): limits for parameter margins around their mean value
         pop (str list,[len(samples),len(pop)]): parameters to exclude from plot
+        par (dict): model parameter values
+        Nvbin (int): number of void bins (default = 2)
+        vbin (str): binning strategy, 'zv': void-redshift bins (default), 'rv': void-radius bins
         legend (str list,len(samples)): legend labels for different samples (default = None)
         title (str): plot title (default = None)
+        figFormat (str): format to save figure (default 'pdf')
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         triangle.pdf (pdf file): triangle plot of posterior parameter distribution
@@ -516,10 +575,10 @@ def triangle(samples, p0, p1, rvi, zvi, pLim, pop, legend=None, title=None):
                     ax.set_xlim(plim[k])
                     ax.set_ylim(plim[j])
                 #if (j==k): ax.set_title('$'+pSample[0].getInlineLatex(names[j],limit=1,err_sig_figs=2)+'$',fontsize=10)
-        gd.export(plotPath+'triangle_'+str(i+1)+'.'+figFormat)
+        gd.export(str(Path(plotPath) / ('triangle_'+str(i+1)+'.'+figFormat)))
 
 
-def triangle_cosmo(samples, logP, pLim, cosmology, legend):
+def triangle_cosmo(samples, logP, pLim, cosmology, par_cosmo, blind=True, legend=None, figFormat='pdf', plotPath='plots/'):
     """Make triangle plot of MCMC posterior for cosmological parameters.
 
     Args:
@@ -527,7 +586,11 @@ def triangle_cosmo(samples, logP, pLim, cosmology, legend):
         logP (ndarray,Nchain): log likelihood values of first sample
         pLim (ndarray list,[len(samples),Npar,2]): limits for parameter margins around their mean value
         cosmology (str): cosmological model to consider [either 'LCDM', 'wCDM', or 'w0waCDM']
-        legend (str list,len(samples)): legend labels for different samples
+        par_cosmo (dict): cosmological parameter values
+        blind (bool): If true, subtract mean from chains (default = True)
+        legend (str list,len(samples)): legend labels for different samples (default = None)
+        figFormat (str): format to save figure (default 'pdf')
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         triangle_cosmology.pdf (pdf file): triangle plot of posterior cosmological parameter distribution
@@ -582,18 +645,22 @@ def triangle_cosmo(samples, logP, pLim, cosmology, legend):
                 ax.set_ylim(pLim[j])
             if (j==k): ax.set_title('$'+pSample[0].getInlineLatex(names[j],limit=1,err_sig_figs=2)+'$',fontsize=12)
 
-    gd.export(plotPath+'triangle_'+cosmology+'.'+figFormat)
+    gd.export(str(Path(plotPath) / ('triangle_'+cosmology+'.'+figFormat)))
 
 
-def logo(xi2dts, p1, vmin=-0.8, vmax=0.4, Nlev=10, cmap='Spectral_r'):
+def logo(xi2dts, p1, Nvbin=2, Nspline=200, rmax=3., vmin=-0.8, vmax=0.4, Nlev=10, cmap='Spectral_r', plotPath='plots/'):
     """Plot Voiager logo background.
 
     Args:
         xi2dts (ndarray,[Nvbin,10*Nspline,20*Nspline]): spline of theory model for POS vs. LOS 2d void-tracer correlation function
         p1 (ndarray,[Nvbin,Npar]): best-fit model parameter values
+        Nvbin (int): number of void bins (default = 2)
+        Nspline (int): number of nodes for spline if Nsmooth > 0 (default = 200)
+        rmax (float): maximum distance from void center in units of effective void radius (default = 3)
         vmin, vmax (float): minimum and maximum for contour map (default = -0.8, 0.4)
         Nlev (int): number of contour lines (default = 10)
         cmap (str): colormap from matplotlib (default = 'Spectral_r'), see https://matplotlib.org/stable/tutorials/colors/colormaps.html
+        plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
         logo.png (png file): Voiager logo background
@@ -613,5 +680,5 @@ def logo(xi2dts, p1, vmin=-0.8, vmax=0.4, Nlev=10, cmap='Spectral_r'):
         plt.ylim(np.array([-1,1])*xymax)
         plt.xticks([])
         plt.yticks([])
-        plt.savefig(plotPath+'logo_'+str(i+1)+'.png', format='png', bbox_inches="tight", dpi=800)
+        plt.savefig(Path(plotPath) / ('logo_'+str(i+1)+'.png'), format='png', bbox_inches="tight", dpi=800)
         plt.clf()
