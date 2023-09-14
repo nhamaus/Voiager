@@ -56,6 +56,7 @@ class Voiager():
         self.stackFile = params['IO']['stackFile']+'.dat' # Filename for data of stacks
         self.chainFile = params['IO']['chainFile']+'.dat' # Filename for data of chains
         self.cosmoFile = params['IO']['chainFile']+'_'+self.cosmology+'.dat' # Filename for data of cosmology chains
+        self.continueStack = params['IO']['continueStack'] # If True, continue using previous stacks. If False, delete old stacks.
         self.continueChain = params['IO']['continueChain'] # If True, continue sampling of previous chains. If False, delete old chains.
 
         # Void selection

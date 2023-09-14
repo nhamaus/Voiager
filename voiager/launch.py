@@ -23,6 +23,9 @@ def launch(vger):
     Xvr, rvr = datalib.makeRandom(Xv, len(Xgr)/float(len(Xg)), vger.Nside, vger.Nbin_nz, rv)
     #np.savetxt(vger.outPath / 'randomVoids.txt', np.vstack((Xvr.T,rvr)).T, fmt='%.6e', header='RA [rad],  DEC [rad],   Z,           R [Mpc/h]')
 
+    # Weights for galaxies and randoms (optional)
+    wg = wr = None 
+
     # Size of catalogs
     Ng, Ngr, Nv, Nvr = len(Xg), len(Xgr), len(Xv), len(Xvr)
 
@@ -47,12 +50,13 @@ def launch(vger):
 
 
     print('Building stacks...')
-    wg = wr = None # weights for galaxies and randoms (optional)
-
     if os.path.exists(vger.outPath / vger.stackFile): # Load existing stacks
-        print('=> Loading previous run')
-        Nvi, rvi, zvi, rmi, rmi2d, xip, xipE, xi, xiE, xiC, xiCI, xi2d, xi2dC, xi2dCI  = pickle.load(open(vger.outPath / vger.stackFile,"rb"))
-    else:
+        if vger.continueStack:
+            print('=> Loading previous stack')
+            Nvi, rvi, zvi, rmi, rmi2d, xip, xipE, xi, xiE, xiC, xiCI, xi2d, xi2dC, xi2dCI  = pickle.load(open(vger.outPath / vger.stackFile,"rb"))
+        else:
+            print('=> Deleting previous stack'); os.remove(vger.outPath / vger.stackFile)
+    elif not os.path.exists(vger.outPath / vger.stackFile) or not vger.continueStack:
         if not vger.project2d: # LOS-projected correlations
             DDp  = datalib.getStack(xv,  xg,  rv,  zv,  Nvc, Ngc, ngm,  zgm,  wg, vger.rmax, vger.Nrbin, vger.ell, vger.symLOS, 0, vger.Nmock, vger.Ncpu) # Void-Galaxy
             DRp  = datalib.getStack(xv,  xgr, rv,  zv,  Nvc, Ngc, ngrm, zgrm, wr, vger.rmax, vger.Nrbin, vger.ell, vger.symLOS, 0, False, vger.Ncpu)        # Void-RandomGalaxy

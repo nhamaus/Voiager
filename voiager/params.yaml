@@ -21,6 +21,7 @@ IO: # Input / output
   columnNames:    ['RA','DEC','Z_red'] # Tracer and random catalog column headers for right ascension, declination, redshift (angles in degrees)
   stackFile:      'stacks' # Filename for data of stacks
   chainFile:      'chains' # Filename for data of chains
+  continueStack:  True # If True, continue using previous stacks. If False, delete old stacks.
   continueChain:  False # If True, continue sampling of previous chains. If False, delete old chains.
 
 
