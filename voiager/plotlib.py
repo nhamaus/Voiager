@@ -517,7 +517,7 @@ def triangle(samples, p0, p1, rvi, zvi, pLim, pop, par, Nvbin=2, vbin='zv', lege
         rvi (ndarray,Nvbin): average effective void radius per bin
         zvi (ndarray,Nvbin): average void redshift per bin
         pLim (ndarray list,[len(samples),Nvbin,Npar,2]): limits for parameter margins around their mean value
-        pop (str list,[len(samples),len(pop)]): parameters to exclude from plot
+        pop (str list,[len(samples),len(pop)]): parameters to exclude from plot, for no exclusion use None
         par (dict): model parameter values
         Nvbin (int): number of void bins (default = 2)
         vbin (str): binning strategy, 'zv': void-redshift bins (default), 'rv': void-radius bins
@@ -533,7 +533,8 @@ def triangle(samples, p0, p1, rvi, zvi, pLim, pop, par, Nvbin=2, vbin='zv', lege
     label = [r'f/b', r'q_\perp/q_\parallel', r'q_\parallel', r'\mathcal{M}', r'\mathcal{Q}'] # parameter labels
     for i in range(Nvbin):
         pops = []
-        for p in pop: pops.append(list(par.keys()).index(p))
+        if pop is not None:
+            for p in pop: pops.append(list(par.keys()).index(p))
         sample = []
         if len(samples) > 1:
             for s in samples: sample.append(np.delete(s[i],pops,1))

@@ -376,7 +376,7 @@ def profile1(xv, xg, xvs, xgs, xgTree, rv, ngz, wg=None, rmax=3, Nbin=20, ell=[0
         xg (ndarray,[len(xg),3]): comoving coordinates of tracers (galaxies)
         xvs (ndarray,[len(xv),3]): shifted comoving coordinates of void centers if Nmock > 1
         xgs (ndarray,[len(xg),3]): shifted comoving coordinates of tracers (galaxies) if Nmock > 1
-        xgTree (cKDTree object): KDTree of tracer (galaxy) distribution
+        xgTree (object): instance of KDTree class of tracer (galaxy) distribution
         rv (ndarray,len(rv)): effective void radii
         ngz (ndarray,len(ngz)): mean number density of tracers at redshift of void center
         wg (ndarray,len(wg)): weights for tracers (default = None)
@@ -957,7 +957,7 @@ def runMCMC(p1, par, prior, xit, xi, xiC, xiCI, vbin='zv', ell=[0,], datavec='2d
         outPath (path): name of output path for chains (default = 'results/')
 
     Returns:
-        sampler (emcee object list,Nvbin): EnsembleSampler class containing the chains for each void bin
+        sampler (object list,Nvbin): instance of EnsembleSampler class containing the chains for each void bin
     """
     sampler = []
     Nvbin = len(p1)
@@ -1071,7 +1071,7 @@ def runMCMC_cosmo(z, par_cosmo, prior_cosmo, DAH_fit, DAH_err, Nwalk, Nchain, fi
         outPath (path): name of output path for chains (default = 'results/')
 
     Returns:
-        sampler (emcee object): EnsembleSampler class containing the chains for cosmological parameters
+        sampler (object): instance of EnsembleSampler class containing the chains for cosmological parameters
     """
     backend = emcee.backends.HDFBackend(Path(outPath) / filename, name=cosmology)
     if cosmology=='LCDM':
