@@ -11,6 +11,11 @@
 > *"Voyager did things no one predicted, found scenes no one expected, and promises to outlive its inventors. Like a great painting or an abiding institution, it has acquired an existence of its own, a destiny beyond the grasp of its handlers."* 
 — Stephen J. Pyne
 
+*V'ger*, the abbreviation for *Voiager*, is an homage to [Star Trek](https://memory-alpha.fandom.com/wiki/Star_Trek:_The_Motion_Picture): the center of the enormous vessel contained the oldest part of V'ger – Voyager 6, an unmanned deep space probe launched by NASA in the late 20th century. The entire vessel surrounding the Voyager probe had been built by an unknown race of machine entities (possibly the [Borg](https://memory-alpha.fandom.com/wiki/Borg)) in order to help it complete what the latter interpreted to be its primary programming: "learn all that is learnable", and return that knowledge to its creator. During its journey, the probe had come to think of itself as V'ger after the only remaining legible letters from its original name (the "O", "Y", "A", and "6" on the nameplate having been obscured from encounters with previous spatial hazards), and amassed knowledge to such a degree as to become self-aware. 
+
+> *"…On its journey back, it amassed so much knowledge, it achieved consciousness itself. It became a living thing."*
+— James T. Kirk, 2270s
+
 
 ## Features
 
@@ -61,7 +66,7 @@ All the parameters of *Voiager* are configured in the file [params.yaml](voiager
 ```sh
 voiager 'path/to/parameter_file.yaml'
 ```
-Previously calculated data vectors are saved in the file [stacks.dat](/results/Beyond2pt/C_mock_lightcone_0240/stacks.dat), this step in the pipeline will be skipped in case the file already exists (i.e., it needs to be removed to start a new calculation). Similarly, the files named [chains.dat](/results/Beyond2pt/C_mock_lightcone_0240/chains.dat) contain previously run MCMCs, which the code will continue sampling when found. Human readable ASCII versions of the chains are also produced.
+Previously calculated data vectors are saved in the file [stacks.dat](/results/Beyond2pt/C_mock_lightcone_0240/stacks.dat), this step in the pipeline will be skipped in case the file already exists (i.e., it needs to be removed to start a new calculation, but note that it requires about 32GB of available memory). Similarly, the files named [chains.dat](/results/Beyond2pt/C_mock_lightcone_0240/chains.dat) contain previously run MCMCs, which the code will continue sampling when found. Human readable ASCII versions of the chains are also produced.
 
 The file [params.yaml](voiager/params.yaml) contains the main adjustable parameters of the code, each of which appears with a brief comment about its meaning.
 
