@@ -14,7 +14,7 @@ except DistributionNotFound:
     ver = "unknown"
 
 project = 'Voiager'
-copyright = '2023, Nico Hamaus'
+copyright = '2024, Nico Hamaus'
 author = 'Nico Hamaus'
 release = ver
 

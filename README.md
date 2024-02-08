@@ -4,7 +4,7 @@
 
 # *Voiager*
 
-**Voi**d dyn**a**mics and **g**eometry **e**xplore**r** (*Voiager*, or short [*V'Ger*](https://intl.startrek.com/database_article/vger)) provides a framework to perform cosmological analyses using voids identified in large-scale structure survey data. The code measures dynamic and geometric shape distortions in void stacks and propagates them to constraints on cosmological parameters using Bayesian inference. More detailed information on this method can be found in the publications listed below. The documentation of the code can be found on [Read*the*Docs](https://docs.readthedocs.io).
+**Voi**d dyn**a**mics and **g**eometry **e**xplore**r** (*Voiager*, or short [*V'ger*](https://memory-alpha.fandom.com/wiki/V'ger)) provides a framework to perform cosmological analyses using voids identified in large-scale structure survey data. The code measures dynamic and geometric shape distortions in void stacks and propagates them to constraints on cosmological parameters using Bayesian inference. More detailed information on this method can be found in the publications listed below. The documentation of the code can be found on [Read*the*Docs](https://docs.readthedocs.io).
 
 *Voiager* is an homage to [NASA's](https://voyager.jpl.nasa.gov/) [Voyager program](https://en.wikipedia.org/wiki/Voyager_program). The twin Voyager 1 and 2 spacecrafts are exploring where nothing from Earth has flown before. Continuing on their nearly 50-year journey since their 1977 launches, they each are much farther away from Earth and the sun than Pluto.
 
@@ -38,7 +38,10 @@ git clone https://github.com/nhamaus/Voiager.git
 cd Voiager
 pip install .
 ```
-External package requirements are provided in the file [requirements.txt](requirements.txt). Follow the instructions provided on the [VIDE wiki](https://bitbucket.org/cosmicvoids/vide_public/wiki/Home/) to install VIDE. For correctly rendering the plots you additionally need [LaTeX](https://texblog.org/installing-latex/).
+External package requirements are provided in the file [requirements.txt](requirements.txt). Follow the instructions provided on the [VIDE wiki](https://bitbucket.org/cosmicvoids/vide_public/wiki/Home/) to install VIDE. For correctly rendering the plots you additionally need [LaTeX](https://texblog.org/installing-latex/). To install the necessary LaTeX packages on a linux machine, you can do
+```sh
+sudo apt-get install texlive texlive-latex-extra cm-super dvipng
+```
 
 ## Usage
 
