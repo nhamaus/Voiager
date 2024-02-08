@@ -114,13 +114,24 @@ def launch(vger):
     fs8_fit = f_b_fit*datalib.bz(zvi,vger.par_cosmo)*datalib.Dz(zvi,vger.par_cosmo)*vger.par_cosmo['s8']
     fs8_err = f_b_err*datalib.bz(zvi,vger.par_cosmo)*datalib.Dz(zvi,vger.par_cosmo)*vger.par_cosmo['s8']
 
-    eps_fid = np.ones(vger.Nvbin)
-    eps_fit = np.array(pMean)[:,1]
-    eps_err = np.array(pStd)[:,1]
+    DA_fid = datalib.DA(zvi,vger.par_cosmo)
+    DA_fit = np.array(pMean)[:,1]*DA_fid
+    DA_err = np.array(pStd)[:,1]*DA_fid
 
-    DAH_fid = datalib.DA(zvi,vger.par_cosmo)/datalib.DH(zvi,vger.par_cosmo)
+    DH_fid = datalib.DH(zvi,vger.par_cosmo)
+    DH_fit = np.array(pMean)[:,2]*DH_fid
+    DH_err = np.array(pStd)[:,2]*DH_fid
+
+    eps = np.array(samples)[:,:,1]/np.array(samples)[:,:,2]
+    eps_fit = np.mean(eps, axis=1)
+    eps_err = np.std(eps, axis=1)
+    eps_lim = np.array(list(zip(eps_fit-vger.Nmarg*eps_err,eps_fit+vger.Nmarg*eps_err)))
+    for i in range(vger.Nvbin): pLim[i][1] = eps_lim[i] # AP parameter epsilon
+
+    DAH_fid = DA_fid/DH_fid
     DAH_fit = eps_fit*DAH_fid
     DAH_err = eps_err*DAH_fid
+
 
     # Output strings in latex format
     out_tex = []
@@ -148,6 +159,7 @@ def launch(vger):
             print('=> Continuing from previous chain')
         else: print('=> Deleting previous chain'); os.remove(vger.outPath / vger.cosmoFile)
     sampler_cosmo = datalib.runMCMC_cosmo(zvi, vger.par_cosmo, vger.prior_cosmo, DAH_fit, DAH_err, vger.Nwalk, vger.Nchain, vger.cosmoFile, vger.cosmology, vger.outPath)
+    #sampler_cosmo = datalib.runMCMC_cosmo2(zvi, vger.par_cosmo, vger.prior_cosmo, DA_fit, DA_err, DH_fit, DH_err, vger.Nwalk, vger.Nchain, vger.cosmoFile, vger.cosmology, vger.outPath)
 
     # Load cosmology chains:
     samples_cosmo, logP_cosmo, pBest_cosmo, pMean_cosmo, pStd_cosmo, pErr_cosmo, pLim_cosmo = datalib.loadMCMC_cosmo(vger.cosmoFile, vger.cosmology, vger.Nburn, vger.Nthin, vger.Nmarg, vger.blind, vger.outPath)
@@ -199,7 +211,7 @@ def launch(vger):
 
     # Cosmological constraints
     plotlib.fs8_DAH(zvi, vger.zmin, vger.zmax, fs8f, fs8e, DAHf, DAHe, tags, vger.par_cosmo, vger.Nspline, vger.figFormat, vger.plotPath)
-    plotlib.triangle([samples], p0, np.vstack((p1[:,0],p1[:,1]/p1[:,2],p1[:,2:].T)).T, rvi, zvi, pLim, ['qpar'], vger.par, vger.Nvbin, vger.vbin, None, None, vger.figFormat, vger.plotPath)
+    plotlib.triangle([samples], p0, p1, rvi, zvi, pLim, ['qpar'], vger.par, vger.Nvbin, vger.vbin, None, None, vger.figFormat, vger.plotPath)
     plotlib.triangle_cosmo(cosmo, logP_cosmo, pLim_cosmo, vger.cosmology, vger.par_cosmo, vger.blind, tags, vger.figFormat, vger.plotPath)
 
     # Logo background

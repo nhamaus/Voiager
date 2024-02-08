@@ -90,9 +90,9 @@ Cosmo: # Cosmological parameters with fiducial values and priors
     h:  0.70 # Reduced Hubble constant
     b0: 1.40 # Linear tracer bias at z=0
 
-  prior_cosmo:
+  prior_cosmo: # Only provide for sampled parameters
     Om: [0.0,1.0]
     w0: [-2,-0.333]
-    wa: [-10,10]
+    #wa: [-10,10]
 
   blind: True # If True, subtract mean of cosmology posterior

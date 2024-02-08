@@ -1020,7 +1020,7 @@ def loadMCMC(filename, Nburn, Nthin, Nmarg=4., Nvbin=2, vbin='zv', outPath='resu
         reader = emcee.backends.HDFBackend(Path(outPath) / filename, name=vbin+str(i))
         act.append(reader.get_autocorr_time(tol=0).mean())
         samples.append(reader.get_chain(discard=int(Nburn*act[i]), thin=int(Nthin*act[i]), flat=True))
-        samples[i][:,1] /= samples[i][:,2] # AP parameter epsilon
+        #samples[i][:,1] /= samples[i][:,2] # AP parameter epsilon
         logP.append(reader.get_log_prob(discard=int(Nburn*act[i]), thin=int(Nthin*act[i]), flat=True))
         #chain = getdist.chains.WeightedSamples(samples=samples[i])
         #pLow.append([chain.confidence(j,0.15865,upper=False) for j in range(Npar)] - pMean[i])
@@ -1053,6 +1053,30 @@ def lnL_DAH(par_cosmo, prior_cosmo, z, DAH_fit, DAH_err):
     else:
         lnL_DAH = -0.5*np.sum((DAH_fit-DAH_model(*par_cosmo))**2/DAH_err**2) + lnP(par_cosmo,prior_cosmo)
         return lnL_DAH
+
+
+# def lnL_DA_DH(par_cosmo, prior_cosmo, z, DA_fit, DA_err, DH_fit, DH_err):
+#     """Joint log likelihood for D_A(z) and D_H(z).
+
+#     Args:
+#         par_cosmo (dict): cosmological parameter values
+#         prior_cosmo (dict): boundary values for uniform cosmological parameter priors
+#         z (ndarray,len(z)): redshifts
+#         DA_fit (ndarray,len(z)): measured values of D_A(z)
+#         DA_err (ndarray,len(z)): measured errors of D_A(z)
+#         DH_fit (ndarray,len(z)): measured values of D_H(z)
+#         DH_err (ndarray,len(z)): measured errors of D_H(z)
+
+#     Returns:
+#         lnL_DA_DH (float): Logarithm of the joint likelihood for D_A(z) and D_H(z) multiplied by the prior
+#     """
+#     DA_model = partial(Da, z)
+#     DH_model = partial(Dh, z)
+#     if np.isinf(lnP(par_cosmo,prior_cosmo)):
+#         return lnP(par_cosmo,prior_cosmo)
+#     else:
+#         lnL_DA_DH = -0.5*np.sum((DA_fit-DA_model(*par_cosmo))**2/DA_err**2) -0.5*np.sum((DH_fit-DH_model(*par_cosmo))**2/DH_err**2) + lnP(par_cosmo,prior_cosmo)
+#         return lnL_DA_DH
 
 
 def runMCMC_cosmo(z, par_cosmo, prior_cosmo, DAH_fit, DAH_err, Nwalk, Nchain, filename, cosmology='LCDM', outPath='results/'):
@@ -1091,6 +1115,46 @@ def runMCMC_cosmo(z, par_cosmo, prior_cosmo, DAH_fit, DAH_err, Nwalk, Nchain, fi
     pos, prob, state = sampler.run_mcmc(p1i, Nchain, progress=True)
     #pool.close(); pool.join()
     return sampler
+
+
+# def runMCMC_cosmo2(z, par_cosmo, prior_cosmo, DA_fit, DA_err, DH_fit, DH_err, Nwalk, Nchain, filename, cosmology='LCDM', outPath='results/'):
+#     """Monte Carlo Markov Chain sampler for D_A(z) and D_H(z).
+
+#     Args:
+#         z (ndarray,len(z)): redshifts
+#         par_cosmo (dict): cosmological parameter values
+#         prior_cosmo (dict): boundary values for uniform cosmological parameter priors
+#         DA_fit (ndarray,len(z)): measured values of D_A(z)
+#         DA_err (ndarray,len(z)): measured errors of D_A(z)
+#         DH_fit (ndarray,len(z)): measured values of D_H(z)
+#         DH_err (ndarray,len(z)): measured errors of D_H(z)
+#         Nwalk (int): number of MCMC walkers
+#         Nchain (int): length of each MCMC chain
+#         filename (str): name of output file for chains
+#         cosmology (str): cosmological model to consider [either 'LCDM' (default), 'wCDM', or 'w0waCDM']
+#         outPath (path): name of output path for chains (default = 'results/')
+
+#     Returns:
+#         sampler (object): instance of EnsembleSampler class containing the chains for cosmological parameters
+#     """
+#     backend = emcee.backends.HDFBackend(Path(outPath) / filename, name=cosmology)
+#     if cosmology=='LCDM':
+#         p0 = [par_cosmo['Om']] # initial value
+#         pr = [prior_cosmo['Om']] # prior
+#     if cosmology=='wCDM':
+#         p0 = [par_cosmo['Om'],par_cosmo['w0']]
+#         pr = [prior_cosmo['Om'],prior_cosmo['w0']]
+#     if cosmology=='w0waCDM':
+#         p0 = [par_cosmo['Om'],par_cosmo['w0'],par_cosmo['wa']]
+#         pr = [prior_cosmo['Om'],prior_cosmo['w0'],prior_cosmo['wa']]
+#     Npar = len(p0)
+#     # Ball around fiducial cosmology as initial values, uniform-randomly distributed with maximum absolute error of 5%
+#     p1i = p0 + 0.1*(np.random.rand(Nwalk,Npar)-0.5)
+#     #pool = mp.Pool()
+#     sampler = emcee.EnsembleSampler(Nwalk, Npar, lnL_DA_DH, args=[pr, z, DA_fit, DA_err, DH_fit, DH_err], backend=backend) #, pool=pool)
+#     pos, prob, state = sampler.run_mcmc(p1i, Nchain, progress=True)
+#     #pool.close(); pool.join()
+#     return sampler
 
 
 def loadMCMC_cosmo(filename, cosmology, Nburn, Nthin, Nmarg=4., blind=True, outPath='results/'):
@@ -1203,6 +1267,20 @@ def DAH(z, Om=0.3, w0=-1., wa=0., Ok=0.):
     return Da(z, Om, Ok, w0, wa)/Dh(z, Om, Ok, w0, wa)
 
 DAH = np.vectorize(DAH, excluded=(1,2,3,4))
+
+
+# def Dh(z, Om=0.3, w0=-1., wa=0., Ok=0.): # Hubble distance
+#     return c/100/abs(Om*(1+z)**3 + Ok*(1+z)**2 + (1-Om-Ok)*(1+z)**(3*(1+w0+wa))*np.exp(-3*wa*z/(1+z)))**0.5
+
+# Dh = np.vectorize(Dh, excluded=(1,2,3,4))
+
+# def Da(z, Om=0.3, w0=-1., wa=0., Ok=0.): # Comoving angular diameter distance
+#     Dc = integrate.quad(Dh, 0., z, args=(Om,Ok,w0,wa))[0] # Comoving distance
+#     if   (Ok==0.): return Dc
+#     elif (Ok<0.):  return c/100/(-Ok)**0.5*np.sin(100/c*(-Ok)**0.5*Dc)
+#     elif (Ok>0.):  return c/100/Ok**0.5*np.sinh(100/c*Ok**0.5*Dc)
+
+# Da = np.vectorize(Da, excluded=(1,2,3,4))
 
 
 def Omz(z, par_cosmo):

@@ -536,12 +536,15 @@ def triangle(samples, p0, p1, rvi, zvi, pLim, pop, par, Nvbin=2, vbin='zv', lege
         if pop is not None:
             for p in pop: pops.append(list(par.keys()).index(p))
         sample = []
-        if len(samples) > 1:
-            for s in samples: sample.append(np.delete(s[i],pops,1))
-        else: sample = np.delete(samples[0][i],pops,1)
+        for s in samples:
+            si = np.copy(s[i])
+            si[:,1] /= si[:,2] # AP parameter epsilon
+            sample.append(np.delete(si,pops,1))
         pfid = np.delete(p0[i],pops)
         pfid[-2:] = None  # Remove fiducial lines for M,Q
-        pfit = np.delete(p1[i],pops)
+        pfit = np.copy(p1)
+        pfit[i,1] /= pfit[i,2] # AP parameter epsilon
+        pfit = np.delete(pfit[i],pops)
         plim = np.delete(pLim[i],pops,axis=0)
         names = np.delete(name,pops)
         labels = np.delete(label,pops)
