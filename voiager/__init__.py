@@ -8,7 +8,7 @@ from voiager import datalib
 from voiager import plotlib
 
 __all__ = ['Voiager', 'launch', 'datalib', 'plotlib']
-__version__ = "0.3.0"
+__version__ = "1.0.0"
 __author__ = 'Nico Hamaus'
 
 Voiager.__version__ = __version__

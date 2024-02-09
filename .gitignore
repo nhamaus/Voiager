@@ -3,6 +3,10 @@
 *.pyc
 __pycache__
 
+# Build
+build/*
+Voiager.egg-info/*
+
 # Documentation
 docs/_*
 
