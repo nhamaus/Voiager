@@ -19,4 +19,4 @@ catalogs/*
 # Output files
 results/Beyond2pt/C_mock_lightcone_0240/chains*
 results/Beyond2pt/C_mock_lightcone_0240/plots/*.pdf
-results/Beyond2pt/C_mock_lightcone_0240/plots/*.png
+results/Beyond2pt/C_mock_lightcone_0240/plots/*.jpg

@@ -55,7 +55,7 @@ def voidSky(Xv, Xvr=None, plotPath='plots/'):
     plt.ylabel(r'Dec', fontsize=14)
     plt.xticks(fontsize=10)
     plt.yticks(fontsize=10)
-    plt.savefig(Path(plotPath) / 'void_sky.jpg', format='jpg', bbox_inches="tight", dpi=800)
+    plt.savefig(Path(plotPath) / 'void_sky.png', format='png', bbox_inches="tight", dpi=800)
     plt.clf()
 
 
@@ -81,7 +81,7 @@ def voidBox(xv, zv, azim=65., elev=45., plotPath='plots/'):
     ax.set_zlabel(r'$X_3\,[h^{-1}\mathrm{Mpc}]$', fontsize=14)
     ax.tick_params(labelsize=10)
     ax.view_init(elev, azim)
-    plt.savefig(Path(plotPath) / 'void_box.jpg', format='jpg', bbox_inches="tight", dpi=400)
+    plt.savefig(Path(plotPath) / 'void_box.png', format='png', bbox_inches="tight", dpi=400)
     # plt.show()
     plt.clf()
 
@@ -105,7 +105,7 @@ def voidRedshift(rv, zv, rvr=None, zvr=None, plotPath='plots/'):
         plt.scatter(rvr, zvr, s=0.2, c='k', alpha=0.1, edgecolors='none', marker='.')
     plt.xlabel(r'$R \; [h^{-1}\mathrm{Mpc}]$', fontsize=fs)
     plt.ylabel(r'$Z$', fontsize=fs)
-    plt.savefig(Path(plotPath) / 'void_redshift.jpg', format='jpg', bbox_inches="tight", dpi=400)
+    plt.savefig(Path(plotPath) / 'void_redshift.png', format='png', bbox_inches="tight", dpi=400)
     plt.clf()
 
 
