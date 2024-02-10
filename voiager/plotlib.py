@@ -43,7 +43,7 @@ def voidSky(Xv, Xvr=None, plotPath='plots/'):
         plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
-        void_sky.jpg (image file): Mollweide projection of void distribution on the sky, color-coded by redshift
+        void_sky.png (image file): Mollweide projection of void distribution on the sky, color-coded by redshift
     """
     plt.figure(figsize=figsize)
     plt.subplot(111, projection="mollweide")
@@ -70,11 +70,12 @@ def voidBox(xv, zv, azim=65., elev=45., plotPath='plots/'):
         plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
-        void_box.jpg (image file): 3d view of void centers in a box, color-coded by redshift
+        void_box.png (image file): 3d view of void centers in a box, color-coded by redshift
     """
     # plt.switch_backend('TKAgg')
     fig = plt.figure(figsize=figsize)
-    ax = Axes3D(fig, proj_type='persp')
+    #ax = Axes3D(fig, proj_type='persp')
+    ax = fig.add_subplot(projection='3d')
     ax.scatter(xv[:,0], xv[:,1], xv[:,2], s=0.5, c=zv, depthshade=True, marker='o', linewidths=mew)
     ax.set_xlabel(r'$X_1\,[h^{-1}\mathrm{Mpc}]$', fontsize=14)
     ax.set_ylabel(r'$X_2\,[h^{-1}\mathrm{Mpc}]$', fontsize=14)
@@ -97,7 +98,7 @@ def voidRedshift(rv, zv, rvr=None, zvr=None, plotPath='plots/'):
         plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
-        void_redshift.jpg (image file): void distribution across effective radius and redshift (color-coded)
+        void_redshift.png (image file): void distribution across effective radius and redshift (color-coded)
     """
     plt.figure(figsize=figsize)
     plt.scatter(rv, zv, s=4, c=zv, alpha=0.3, edgecolors='none', marker='.')
@@ -667,7 +668,7 @@ def logo(xi2dts, p1, Nvbin=2, Nspline=200, rmax=3., vmin=-0.8, vmax=0.4, Nlev=10
         plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
-        logo.png (png file): Voiager logo background
+        logo.png (image file): Voiager logo background
     """
     levels = np.linspace(vmin,vmax,Nlev) + 0.03 # contour values
     for i in range(Nvbin):
