@@ -8,20 +8,23 @@
 
 import os
 import sys
-# Include root directory in path
+import re
+# Include root directory in beginning of path
 sys.path.insert(0, os.path.abspath("../"))
 
 # Find version
-from pkg_resources import DistributionNotFound, get_distribution
-try:
-    ver = get_distribution("voiager").version
-except DistributionNotFound:
-    ver = "unknown"
+def find_version():
+    init_file = open(os.path.join(sys.path[0], 'voiager', '__init__.py')).read()
+    version = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", init_file, re.M)
+    if version:
+        return version.group(1)
+    raise RuntimeError("Cannot find version in __init__.py")
+
 
 project = 'Voiager'
 copyright = '2024, Nico Hamaus'
 author = 'Nico Hamaus'
-release = ver
+release = find_version()
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

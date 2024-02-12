@@ -4,7 +4,7 @@
 
 # *Voiager*
 
-**Voi**d dyn**a**mics and **g**eometry **e**xplore**r** (*Voiager*, or short [*Vger*](https://memory-alpha.fandom.com/wiki/V'ger)) provides a framework to perform cosmological analyses using voids identified in large-scale structure survey data. The code measures dynamic and geometric shape distortions in void stacks and propagates them to constraints on cosmological parameters using Bayesian inference. More detailed information on this method can be found in the publications listed below. The documentation of the code can be found on [Read*the*Docs](https://docs.readthedocs.io).
+**Voi**d dyn**a**mics and **g**eometry **e**xplore**r** (*Voiager*, or short [*Vger*](https://memory-alpha.fandom.com/wiki/V'ger)) provides a framework to perform cosmological analyses using voids identified in large-scale structure survey data. The code measures dynamic and geometric shape distortions in void stacks and propagates them to constraints on cosmological parameters using Bayesian inference. More detailed information on this method can be found in the publications listed below. The documentation of the code can be found on [Read*the*Docs](https://voiager.readthedocs.io/en/latest/index.html).
 
 *Voiager* is an homage to [NASA's](https://voyager.jpl.nasa.gov/) [Voyager program](https://en.wikipedia.org/wiki/Voyager_program). The twin Voyager 1 and 2 spacecrafts are exploring where nothing from Earth has flown before. Continuing on their nearly 50-year journey since their 1977 launches, they each are much farther away from Earth and the sun than Pluto.
 
