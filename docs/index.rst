@@ -27,6 +27,7 @@ Voiager
    publications
    license
    contact
+   acknowledgments
 
 
 * :ref:`genindex`

@@ -91,3 +91,23 @@ This code is copyrighted under the MIT licence, see [LICENSE](LICENSE).
 
 ## Contact
 You can reach me via the information provided on my personal [homepage](https://www.usm.uni-muenchen.de/people/hamaus/).
+
+## Acknowledgments
+I am grateful for invaluable scientific interactions with the following people who, among others, shaped the design of *Voiager*:
+
+- Alice Pisani
+- Ben Wandelt
+- Carlos Correa
+- Giorgia Pollina
+- Giovanni Verza
+- Giulia Degni
+- Guilhem Lavaux
+- Jin-Ah Choi
+- Jochen Weller
+- Marie Aubert
+- Marie-Claude Cousinou
+- Nico Schuster
+- Paul Sutter
+- Sebastian Stammler
+- Sofia Contarini
+- Stéphanie Escoffier
