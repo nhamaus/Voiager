@@ -6,15 +6,9 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-import os
-import sys
-from pkg_resources import DistributionNotFound, get_distribution
-
-# Include root directory in path
-sys.path.insert(0, os.path.abspath("../"))
-from voiager import Voiager
 
 # Find version
+from pkg_resources import DistributionNotFound, get_distribution
 try:
     ver = get_distribution("voiager").version
 except DistributionNotFound:
@@ -39,22 +33,22 @@ extensions = [
     ]
 
 # Modules to be mocked up for external dependencies that are not met at build time and break the building process.
-# autodoc_mock_imports = [
-        # 'abel',
-        # 'astropy',
-        # 'cython',
-        # 'emcee',
-        # 'getdist',
-        # 'h5py',
-        # 'healpy',
-        # 'matplotlib',
-        # 'numpy',
-        # 'pyabel',
-        # 'pyyaml',
-        # 'scipy',
-        # 'tqdm',
-        # 'vide',
-# ]
+autodoc_mock_imports = [
+        'abel',
+        'astropy',
+        'cython',
+        'emcee',
+        'getdist',
+        'h5py',
+        'healpy',
+        #'matplotlib',
+        #'numpy',
+        'pyabel',
+        'pyyaml',
+        'scipy',
+        'tqdm',
+        'vide',
+]
 
 # Width of html pages
 sphinx_rtd_size_width = "100%"
