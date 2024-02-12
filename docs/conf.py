@@ -37,6 +37,11 @@ extensions = [
 #    'sphinxarg.ext',
     ]
 
+# Modules to be mocked up for external dependencies that are not met at build time and break the building process.
+autodoc_mock_imports = [
+    'getdist',
+]
+
 # Width of html pages
 sphinx_rtd_size_width = "100%"
 
