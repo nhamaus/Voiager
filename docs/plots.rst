@@ -16,7 +16,7 @@ Catalog properties
 
 
 .. figure:: ../results/Beyond2pt/C_mock_lightcone_0240/plots/void_box.png
-   :scale: 20 %
+   :scale: 25 %
    :align: center
 
    In the file ``void_box`` the same void centers are shown in a Cartesian (comoving) coordinate system

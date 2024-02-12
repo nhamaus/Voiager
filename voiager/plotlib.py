@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from pathlib import Path
 from scipy import optimize
 import getdist
@@ -59,14 +58,14 @@ def voidSky(Xv, Xvr=None, plotPath='plots/'):
     plt.clf()
 
 
-def voidBox(xv, zv, azim=65., elev=45., plotPath='plots/'):
+def voidBox(xv, zv, azim=45., elev=-120., plotPath='plots/'):
     """Plot 3d distribution of void centers in a comoving box.
 
     Args:
         xv (ndarray,[len(xv),3]): comoving coordinates of void centers
         zv (ndarray,len(zv)): void redshifts
-        azim (float): azimuthal viewing angle in degrees (default = 65)
-        elev (float): elevation viewing angle in degrees (default = 45)
+        azim (float): azimuthal viewing angle in degrees (default = 45.)
+        elev (float): elevation viewing angle in degrees (default = -120.)
         plotPath (path): name of output path for plot (default = 'plots/')
 
     Returns:
@@ -74,7 +73,6 @@ def voidBox(xv, zv, azim=65., elev=45., plotPath='plots/'):
     """
     # plt.switch_backend('TKAgg')
     fig = plt.figure(figsize=figsize)
-    #ax = Axes3D(fig, proj_type='persp')
     ax = fig.add_subplot(projection='3d')
     ax.scatter(xv[:,0], xv[:,1], xv[:,2], s=0.5, c=zv, depthshade=True, marker='o', linewidths=mew)
     ax.set_xlabel(r'$X_1\,[h^{-1}\mathrm{Mpc}]$', fontsize=14)
@@ -82,7 +80,7 @@ def voidBox(xv, zv, azim=65., elev=45., plotPath='plots/'):
     ax.set_zlabel(r'$X_3\,[h^{-1}\mathrm{Mpc}]$', fontsize=14)
     ax.tick_params(labelsize=10)
     ax.view_init(elev, azim)
-    plt.savefig(Path(plotPath) / 'void_box.png', format='png', bbox_inches="tight", dpi=400)
+    plt.savefig(Path(plotPath) / 'void_box.png', format='png', dpi=400)
     # plt.show()
     plt.clf()
 

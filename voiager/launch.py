@@ -56,7 +56,7 @@ def launch(vger):
             Nvi, rvi, zvi, rmi, rmi2d, xip, xipE, xi, xiE, xiC, xiCI, xi2d, xi2dC, xi2dCI  = pickle.load(open(vger.outPath / vger.stackFile,"rb"))
         else:
             print('=> Deleting previous stack'); os.remove(vger.outPath / vger.stackFile)
-    elif not os.path.exists(vger.outPath / vger.stackFile) or not vger.continueStack:
+    if not os.path.exists(vger.outPath / vger.stackFile) or not vger.continueStack:
         if not vger.project2d: # LOS-projected correlations
             DDp  = datalib.getStack(xv,  xg,  rv,  zv,  Nvc, Ngc, ngm,  zgm,  wg, vger.rmax, vger.Nrbin, vger.ell, vger.symLOS, 0, vger.Nmock, vger.Ncpu) # Void-Galaxy
             DRp  = datalib.getStack(xv,  xgr, rv,  zv,  Nvc, Ngc, ngrm, zgrm, wr, vger.rmax, vger.Nrbin, vger.ell, vger.symLOS, 0, False, vger.Ncpu)        # Void-RandomGalaxy
@@ -189,7 +189,7 @@ def launch(vger):
     print('Plotting...')
     # Void sample properties
     plotlib.voidSky(Xv, Xvr, vger.plotPath)
-    plotlib.voidBox(xv, zv, 65., 45., vger.plotPath)
+    plotlib.voidBox(xv, zv, 45., -120., vger.plotPath)
     plotlib.voidRedshift(rv, zv, rvr, zvr, vger.plotPath)
     plotlib.voidAbundance(cv, vger.Nbin_nv, vger.zmin, vger.zmax, vger.sky, vger.par_cosmo, r'c_\mathrm{v}', '', 'density-contrast', [1e-10,1e-5], None, vger.Nmock, vger.figFormat, vger.plotPath)
     plotlib.voidAbundance(dv, vger.Nbin_nv, vger.zmin, vger.zmax, vger.sky, vger.par_cosmo, r'n_\mathrm{c}', r'[\bar{n}]', 'core-density', [1e-10,1e-5], None, vger.Nmock, vger.figFormat, vger.plotPath)

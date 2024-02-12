@@ -27,8 +27,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
+    'sphinx_automodapi.automodapi',
 #    'sphinxarg.ext',
-#    'sphinx_automodapi.automodapi',
     ]
 
 # Width of html pages
