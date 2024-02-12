@@ -46,7 +46,7 @@ autodoc_mock_imports = [
         'getdist',
         'h5py',
         'healpy',
-        'matplotlib',
+        #'matplotlib',
         'numpy',
         'pyabel',
         'pyyaml',
