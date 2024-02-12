@@ -6,8 +6,14 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+import os
+import sys
 from pkg_resources import DistributionNotFound, get_distribution
 
+# Include root directory in path
+sys.path.insert(0, os.path.abspath("../"))
+
+# Find version
 try:
     ver = get_distribution("voiager").version
 except DistributionNotFound:
