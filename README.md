@@ -2,7 +2,17 @@
 <img src="docs/voiager.png" alt="Voiager" width="600"/>
 </center>
 
+
 # *Voiager*
+![GitHub Release](https://img.shields.io/github/v/release/hamaus/voiager)
+![PyPI - Status](https://img.shields.io/pypi/status/voiager)
+![Read the Docs](https://img.shields.io/readthedocs/voiager)
+[![arXiv](https://img.shields.io/badge/arXiv-1507.04363-b31b1b.svg)](https://arxiv.org/abs/1507.04363)
+[![arXiv](https://img.shields.io/badge/arXiv-1602.01784-b31b1b.svg)](https://arxiv.org/abs/1602.01784)
+[![arXiv](https://img.shields.io/badge/arXiv-1705.05328-b31b1b.svg)](https://arxiv.org/abs/1705.05328)
+[![arXiv](https://img.shields.io/badge/arXiv-2007.07895-b31b1b.svg)](https://arxiv.org/abs/2007.07895)
+[![arXiv](https://img.shields.io/badge/arXiv-2108.10347-b31b1b.svg)](https://arxiv.org/abs/2108.10347)
+
 
 **Voi**d dyn**a**mics and **g**eometry **e**xplore**r** (*Voiager*, or short [*Vger*](https://memory-alpha.fandom.com/wiki/V'ger)) provides a framework to perform cosmological analyses using voids identified in large-scale structure survey data. The code measures dynamic and geometric shape distortions in void stacks and propagates them to constraints on cosmological parameters using Bayesian inference. More detailed information on this method can be found in the publications listed below. The documentation of the code can be found on [Read*the*Docs](https://voiager.readthedocs.io/en/latest/index.html).
 
