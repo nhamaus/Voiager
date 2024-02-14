@@ -76,7 +76,7 @@ All the parameters of *Voiager* are configured in the file [params.yaml](voiager
 ```sh
 voiager 'path/to/parameter_file.yaml'
 ```
-Previously calculated data vectors are saved in the file [stacks.dat](/results/Beyond2pt/C_mock_lightcone_0240/stacks.dat), this step in the pipeline will be skipped in case the file already exists (i.e., it needs to be removed to start a new calculation, but note that it requires about 32GB of available memory). Similarly, the files named [chains.dat](/results/Beyond2pt/C_mock_lightcone_0240/chains.dat) contain previously run MCMCs, which the code will continue sampling when found. Human readable ASCII versions of the chains are also produced.
+Previously calculated data vectors are saved in the file [stacks.dat](/results/Beyond2pt/C_mock_lightcone_0300/stacks.dat), this step in the pipeline will be skipped in case the file already exists (i.e., it needs to be removed to start a new calculation, but note that it requires about 32GB of available memory). Similarly, the files named [chains.dat](/results/Beyond2pt/C_mock_lightcone_0300/chains.dat) contain previously run MCMCs, which the code will continue sampling when found. Human readable ASCII versions of the chains are also produced.
 
 The file [params.yaml](voiager/params.yaml) contains the main adjustable parameters of the code, each of which appears with a brief comment about its meaning.
 
