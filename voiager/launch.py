@@ -122,9 +122,12 @@ def launch(vger):
     DH_fit = np.array(pMean)[:,2]*DH_fid
     DH_err = np.array(pStd)[:,2]*DH_fid
 
-    eps = np.array(samples)[:,:,1]/np.array(samples)[:,:,2]
-    eps_fit = np.mean(eps, axis=1)
-    eps_err = np.std(eps, axis=1)
+    eps, eps_fit, eps_err = [], np.zeros(vger.Nvbin), np.zeros(vger.Nvbin)
+    for i in range(vger.Nvbin):
+        eps.append(np.array(samples[i])[:,1]/np.array(samples[i])[:,2])
+        eps_fit[i] = np.mean(eps[i])
+        eps_err[i] = np.std(eps[i])
+
     eps_lim = np.array(list(zip(eps_fit-vger.Nmarg*eps_err,eps_fit+vger.Nmarg*eps_err)))
     for i in range(vger.Nvbin): pLim[i][1] = eps_lim[i] # AP parameter epsilon
 

@@ -1,5 +1,5 @@
 <center>
-<img src="docs/voiager.png" alt="Voiager" width="600"/>
+<img src="docs/voiager.png" alt="Voiager" width="500"/>
 </center>
 
 
