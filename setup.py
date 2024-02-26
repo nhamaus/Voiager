@@ -26,7 +26,7 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     author='Nico Hamaus',
-    author_email='nhamaus[at]gmail.com',
+    author_email='nhamaus@gmail.com',
     description='Perform cosmological analyses using voids identified in large-scale structure survey data',
     long_description=long_description,
     long_description_content_type='text/markdown',
