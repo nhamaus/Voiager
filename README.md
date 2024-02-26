@@ -4,8 +4,8 @@
 
 
 # *Voiager*
-![GitHub Release](https://img.shields.io/github/v/release/hamaus/voiager)
-![PyPI - Status](https://img.shields.io/pypi/status/voiager)
+![GitHub Release](https://img.shields.io/github/v/release/nhamaus/voiager)
+![PyPI - Version](https://img.shields.io/pypi/v/Voiager)
 ![Read the Docs](https://img.shields.io/readthedocs/voiager)
 [![arXiv](https://img.shields.io/badge/arXiv-1507.04363-b31b1b.svg)](https://arxiv.org/abs/1507.04363)
 [![arXiv](https://img.shields.io/badge/arXiv-1602.01784-b31b1b.svg)](https://arxiv.org/abs/1602.01784)
