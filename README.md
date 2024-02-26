@@ -4,7 +4,7 @@
 
 
 # *Voiager*
-![GitHub Release](https://img.shields.io/github/v/release/nhamaus/voiager)
+<!-- ![GitHub Release](https://img.shields.io/github/v/release/nhamaus/voiager) -->
 ![PyPI - Version](https://img.shields.io/pypi/v/Voiager)
 ![Read the Docs](https://img.shields.io/readthedocs/voiager)
 [![arXiv](https://img.shields.io/badge/arXiv-1507.04363-b31b1b.svg)](https://arxiv.org/abs/1507.04363)
