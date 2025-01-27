@@ -521,8 +521,8 @@ def getData(DDp, DRp, RDp, RRp, DD, DR, RD, RR, DD2d, DR2d, RD2d, RR2d, rv, rvr,
                 V2d[i,j] = np.pi*(r2d[Nrbin+i+1]**2-r2d[Nrbin+i]**2)*(r2d[j+1]-r2d[j])
 
     # Define binning
-    if vbin == 'rv': yv, yvr = np.copy([rv,rvr])
-    if vbin == 'zv': yv, yvr = np.copy([zv,zvr])
+    if vbin == 'rv': yv, yvr = np.copy(rv), np.copy(rvr)
+    if vbin == 'zv': yv, yvr = np.copy(zv), np.coy(zvr) 
     bins = getBins(yv,binning,Nvbin)
 
     # Stack individual void profiles and normalize by shell volumes (not necessary, but useful. Cancels out in LS estimator)
